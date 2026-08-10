@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://dwh1xej2sf1wm"]
+
+[ext_resource type="Script" uid="uid://co2vilkmiojve" path="res://scripts/proyectile.gd" id="1_160ws"]
+[ext_resource type="Texture2D" uid="uid://chlc2bkolh0tt" path="res://assets/proyectile.png" id="2_23gut"]
+
+[node name="Proyectile" type="Node2D" unique_id=558585343]
+script = ExtResource("1_160ws")
+speed = 600.0
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1471167153]
+texture = ExtResource("2_23gut")

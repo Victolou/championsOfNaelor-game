@@ -1,4 +1,12 @@
-Camera2D
+Node
 Sprite2D
+Node2D
+AnimatedSprite2D
+AnimationPlayer
+HealthComponent
+IdleState
+StateMachine
 CollisionShape2D
+MovementComponent
 CharacterBody2D
+Camera2D

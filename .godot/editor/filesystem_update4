@@ -1,0 +1,6 @@
+res://scenes/proyectile.tscn
+res://scripts/entity.gd
+res://scripts/managers/proyectile_manager.gd
+res://scripts/components/movement_component.gd
+res://scripts/battle.gd
+res://scripts/targeting/swordPattern.gd

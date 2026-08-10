@@ -1,2 +1,9 @@
+res://assets/
+res://scripts/components/
 res://scripts/
 res://scenes/
+res://scripts/managers/
+res://resource/patterns/
+res://resource/stats/
+res://resource/skills/
+res://scripts/states/

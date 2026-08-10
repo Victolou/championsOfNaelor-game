@@ -1,14 +1,17 @@
 [gd_scene format=3 uid="uid://det0ccm4kutr"]
 
 [ext_resource type="Script" uid="uid://jqcxdcsgra03" path="res://scripts/battle.gd" id="1_p1qf1"]
-[ext_resource type="PackedScene" uid="uid://dpw3qvkhq1rqs" path="res://scenes/grid.tscn" id="2_a12nh"]
+[ext_resource type="PackedScene" uid="uid://dpw3qvkhq1rqs" path="res://scenes/managers/grid_manager.tscn" id="2_a12nh"]
 [ext_resource type="PackedScene" uid="uid://b125vtgef5s1h" path="res://scenes/player.tscn" id="3_lpir7"]
+[ext_resource type="PackedScene" uid="uid://e7cyj7ff3k5l" path="res://scenes/managers/proyectile_manager.tscn" id="4_a12nh"]
 
 [node name="Battle" type="Node2D" unique_id=176282498]
 script = ExtResource("1_p1qf1")
 
-[node name="Grid" parent="." unique_id=2131940729 instance=ExtResource("2_a12nh")]
-
 [node name="Player" parent="." unique_id=113697057 instance=ExtResource("3_lpir7")]
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=862318149]
+
+[node name="GridManager" parent="." unique_id=2131940729 instance=ExtResource("2_a12nh")]
+
+[node name="ProyectileManager" parent="." unique_id=7644906 instance=ExtResource("4_a12nh")]

@@ -1,0 +1,4 @@
+SwordPattern
+CharacterStats
+Skill
+Resource

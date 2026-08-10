@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://b125vtgef5s1h"]
+
+[ext_resource type="Script" uid="uid://cxbjhc28b72so" path="res://scripts/player.gd" id="1_3vyb7"]
+[ext_resource type="Texture2D" uid="uid://crh2xxxq86krq" path="res://assets/player.png" id="2_g2els"]
+[ext_resource type="Script" uid="uid://050747wncgaa" path="res://scripts/components/movement_component.gd" id="3_qhqgy"]
+[ext_resource type="Script" uid="uid://ch670cmfppbgt" path="res://scripts/components/stateMachine.gd" id="4_dqkch"]
+[ext_resource type="Script" uid="uid://dq54tvstuw1cw" path="res://scripts/states/idleState.gd" id="5_ur7pv"]
+[ext_resource type="Script" uid="uid://dh1tu835s0qxu" path="res://scripts/states/moveState.gd" id="6_y4r1p"]
+[ext_resource type="Script" uid="uid://bj7k8m7nmdd4e" path="res://scripts/states/hitState.gd" id="7_d2wvv"]
+[ext_resource type="Script" uid="uid://bpxqgxhonh8ti" path="res://scripts/states/deadState.gd" id="8_3v2ag"]
+[ext_resource type="Script" uid="uid://b4go3124e1njw" path="res://scripts/states/attackState.gd" id="9_jej6c"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bv0jf"]
+
+[node name="Player" type="CharacterBody2D" unique_id=113697057]
+script = ExtResource("1_3vyb7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=992861501]
+shape = SubResource("RectangleShape2D_bv0jf")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1974887512]
+texture = ExtResource("2_g2els")
+
+[node name="MovementComponent" type="Node" parent="." unique_id=42981144]
+script = ExtResource("3_qhqgy")
+metadata/_custom_type_script = "uid://050747wncgaa"
+
+[node name="StateMachine" type="Node" parent="." unique_id=944005083]
+script = ExtResource("4_dqkch")
+metadata/_custom_type_script = "uid://ch670cmfppbgt"
+
+[node name="IdleState" type="Node" parent="StateMachine" unique_id=2082493659]
+script = ExtResource("5_ur7pv")
+
+[node name="MoveState" type="Node" parent="StateMachine" unique_id=1078071195]
+script = ExtResource("6_y4r1p")
+
+[node name="HitState" type="Node" parent="StateMachine" unique_id=400011094]
+script = ExtResource("7_d2wvv")
+
+[node name="DeadState" type="Node" parent="StateMachine" unique_id=1365317073]
+script = ExtResource("8_3v2ag")
+
+[node name="AttackState" type="Node" parent="StateMachine" unique_id=1915267657]
+script = ExtResource("9_jej6c")

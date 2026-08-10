@@ -1,15 +1,144 @@
 [gd_scene format=3 uid="uid://b125vtgef5s1h"]
 
 [ext_resource type="Script" uid="uid://cxbjhc28b72so" path="res://scripts/player.gd" id="1_3vyb7"]
+[ext_resource type="Script" uid="uid://b1ro11ofn1lss" path="res://scripts/resource/skill.gd" id="2_3v2ag"]
 [ext_resource type="Texture2D" uid="uid://crh2xxxq86krq" path="res://assets/player.png" id="2_g2els"]
+[ext_resource type="Resource" uid="uid://b0i3abvdrv1g0" path="res://resource/skills/sword.tres" id="3_jej6c"]
+[ext_resource type="Script" uid="uid://050747wncgaa" path="res://scripts/components/movement_component.gd" id="3_qhqgy"]
+[ext_resource type="Script" uid="uid://ch670cmfppbgt" path="res://scripts/components/stateMachine.gd" id="4_dqkch"]
+[ext_resource type="Resource" uid="uid://dorvl6p0fcuyg" path="res://resource/stats/player.tres" id="4_f1ej7"]
+[ext_resource type="Script" uid="uid://dm4v3k7w127mt" path="res://scripts/components/combat_component.gd" id="4_y4r1p"]
+[ext_resource type="Script" uid="uid://dq54tvstuw1cw" path="res://scripts/states/idleState.gd" id="5_ur7pv"]
+[ext_resource type="Script" uid="uid://dk8ubytxspr4i" path="res://scripts/components/health_component.gd" id="6_jej6c"]
+[ext_resource type="Script" uid="uid://dh1tu835s0qxu" path="res://scripts/states/moveState.gd" id="6_y4r1p"]
+[ext_resource type="Script" uid="uid://bj7k8m7nmdd4e" path="res://scripts/states/hitState.gd" id="7_d2wvv"]
+[ext_resource type="Script" uid="uid://bpxqgxhonh8ti" path="res://scripts/states/deadState.gd" id="8_3v2ag"]
+[ext_resource type="Script" uid="uid://b4go3124e1njw" path="res://scripts/states/attackState.gd" id="9_jej6c"]
+[ext_resource type="PackedScene" uid="uid://dwh1xej2sf1wm" path="res://scenes/proyectile.tscn" id="9_oprun"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bv0jf"]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_d2wvv"]
+atlas = ExtResource("2_g2els")
+region = Rect2(0, 0, 153, 127)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3v2ag"]
+atlas = ExtResource("2_g2els")
+region = Rect2(0, 127, 153, 127)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jej6c"]
+atlas = ExtResource("2_g2els")
+region = Rect2(153, 127, 153, 127)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f1ej7"]
+atlas = ExtResource("2_g2els")
+region = Rect2(306, 127, 153, 127)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y4r1p"]
+atlas = ExtResource("2_g2els")
+region = Rect2(0, 0, 153, 127)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_bv0jf"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d2wvv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3v2ag")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jej6c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f1ej7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jej6c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3v2ag")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d2wvv")
+}],
+"loop": 0,
+"name": &"basic_attack",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y4r1p")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d2wvv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3v2ag")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jej6c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f1ej7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jej6c")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3v2ag")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d2wvv")
+}],
+"loop": 0,
+"name": &"sword",
+"speed": 10.0
+}]
+
 [node name="Player" type="CharacterBody2D" unique_id=113697057]
 script = ExtResource("1_3vyb7")
+skills = Array[ExtResource("2_3v2ag")]([ExtResource("3_jej6c")])
+stats = ExtResource("4_f1ej7")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=992861501]
 shape = SubResource("RectangleShape2D_bv0jf")
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1974887512]
-texture = ExtResource("2_g2els")
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=329373293]
+sprite_frames = SubResource("SpriteFrames_bv0jf")
+animation = &"basic_attack"
+
+[node name="MovementComponent" type="Node" parent="." unique_id=42981144]
+script = ExtResource("3_qhqgy")
+metadata/_custom_type_script = "uid://050747wncgaa"
+
+[node name="HealthComponent" type="Node" parent="." unique_id=106490410]
+script = ExtResource("6_jej6c")
+
+[node name="CombatComponent" type="Node" parent="." unique_id=861157082]
+script = ExtResource("4_y4r1p")
+basic_projectile = ExtResource("9_oprun")
+
+[node name="StateMachine" type="Node" parent="." unique_id=944005083]
+script = ExtResource("4_dqkch")
+metadata/_custom_type_script = "uid://ch670cmfppbgt"
+
+[node name="IdleState" type="Node" parent="StateMachine" unique_id=2082493659]
+script = ExtResource("5_ur7pv")
+
+[node name="MoveState" type="Node" parent="StateMachine" unique_id=1078071195]
+script = ExtResource("6_y4r1p")
+
+[node name="HitState" type="Node" parent="StateMachine" unique_id=400011094]
+script = ExtResource("7_d2wvv")
+
+[node name="DeadState" type="Node" parent="StateMachine" unique_id=1365317073]
+script = ExtResource("8_3v2ag")
+
+[node name="AttackState" type="Node" parent="StateMachine" unique_id=1915267657]
+script = ExtResource("9_jej6c")

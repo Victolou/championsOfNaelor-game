@@ -1,4 +1,4 @@
-class_name Grid
+class_name GridManager
 extends Node2D
 
 const WIDTH = 6
@@ -73,6 +73,15 @@ func get_neighbor(tile:Tile, direction:Vector2i):
 		tile.grid_x + direction.x,
 		tile.grid_y + direction.y
 		)
+
+func get_neighbor_facing(tile, facing):
+	if facing == Vector2i.LEFT:
+		return get_left(tile)
+
+	if facing == Vector2i.RIGHT:
+		return get_right(tile)
+
+	return null
 
 # Funciones de conveniencia para obtener Tiles vecinos en direcciones específicas
 # (Útiles para comprobar el estado o los ocupantes de los Tiles de alrededor)

@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="SwordPattern" format=3 uid="uid://5w6dqxy0jjsm"]
+
+[ext_resource type="Script" uid="uid://dkqqibkui4mbu" path="res://scripts/targeting/swordPattern.gd" id="1_hektm"]
+
+[resource]
+script = ExtResource("1_hektm")
+metadata/_custom_type_script = "uid://dkqqibkui4mbu"

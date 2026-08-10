@@ -1,26 +1,31 @@
 class_name Battle
 extends Node2D
 
-@onready var grid: Grid = $Grid
 @onready var player: Player = $Player
 @onready var camera_2d: Camera2D = $Camera2D
+@onready var grid_manager: GridManager = $GridManager
+@onready var proyectile_manager: ProjectileManager = $ProyectileManager
 
 @export var screen_margin := 100.0
 
 func _ready():
-	player.grid = grid
+	player.initialize(
+		grid_manager,
+		false,
+		proyectile_manager
+	)
 	
-	_spawn_player(1,1)
+	_spawn_entity(player, 4, 1)
 	
 	_center_camera()
 
-# Centra la camara al centro del grid
+# Centra la cámara en el tablero
 func _center_camera():
-	camera_2d.global_position = grid.get_center_grid()
+	camera_2d.global_position = grid_manager.get_center_grid()
 
 	var grid_size = Vector2(
-		grid.WIDTH * grid.TILE_SIZE.x,
-		grid.HEIGHT * grid.TILE_SIZE.y
+		grid_manager.WIDTH * grid_manager.TILE_SIZE.x,
+		grid_manager.HEIGHT * grid_manager.TILE_SIZE.y
 	)
 
 	var viewport_size = get_viewport_rect().size - Vector2(screen_margin, screen_margin)
@@ -32,11 +37,12 @@ func _center_camera():
 
 	camera_2d.zoom = Vector2(zoom_value, zoom_value)
 
-# Establece donde va aparecer el player al iniciar la partida
-func _spawn_player(x: int, y: int) -> void:
-	var start_tile = grid.get_tile(x, y)
 
-	player.current_tile = start_tile
-	start_tile.enter(player)
+# Establece dónde aparecerá el jugador al iniciar la partida
+func _spawn_entity(entity: Entity, x: int, y: int) -> void:
+	var start_tile = grid_manager.get_tile(x, y)
 
-	player.global_position = start_tile.global_position
+	entity.current_tile = start_tile
+	start_tile.enter(entity)
+
+	entity.global_position = start_tile.global_position
