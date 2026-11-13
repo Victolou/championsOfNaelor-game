@@ -12,3 +12,5 @@ extends Resource
 @export var icon : Texture2D
 
 @export var animation : StringName
+
+@export var attack_frame := 3

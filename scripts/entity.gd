@@ -13,6 +13,9 @@ var moving := false
 var grid_manager: GridManager
 var is_red: bool
 
+func _ready():
+	health.died.connect(_on_died)
+
 func initialize(
 	battle_grid: GridManager,
 	red_team: bool,
@@ -28,3 +31,7 @@ func get_direction() -> Vector2i:
 		return Vector2i.RIGHT
 	else:
 		return Vector2i.LEFT
+		
+func _on_died():
+	var dead_state: DeadState = $StateMachine/DeadState
+	$StateMachine.change_state(dead_state)

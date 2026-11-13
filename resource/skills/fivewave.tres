@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="Skill" format=3 uid="uid://dbi4isitaoaqk"]
+
+[ext_resource type="Script" uid="uid://b1ro11ofn1lss" path="res://scripts/resource/skill.gd" id="1_2gxmw"]
+[ext_resource type="Texture2D" uid="uid://cle5nxolpa815" path="res://assets/default_icons.png" id="1_hdfh6"]
+[ext_resource type="Script" uid="uid://dkqqibkui4mbu" path="res://scripts/targeting/swordPattern.gd" id="2_qc3pn"]
+
+[sub_resource type="Resource" id="Resource_2gxmw"]
+script = ExtResource("2_qc3pn")
+metadata/_custom_type_script = "uid://dkqqibkui4mbu"
+
+[resource]
+script = ExtResource("1_2gxmw")
+target_pattern = SubResource("Resource_2gxmw")
+skill_name = "fivewave"
+damage = 300
+icon = ExtResource("1_hdfh6")
+animation = &"cast"
+attack_frame = 2
+metadata/_custom_type_script = "uid://b1ro11ofn1lss"

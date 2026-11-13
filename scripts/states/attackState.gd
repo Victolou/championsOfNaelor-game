@@ -20,7 +20,8 @@ func enter():
 		entity.animated_sprite_2d.play(basic_attack_animation)
 	else:
 		entity.combat.is_basic_attack = false
-		entity.animated_sprite_2d.play(current_skill.skill_name)
+		entity.combat.current_skill = current_skill
+		entity.animated_sprite_2d.play(current_skill.animation)
 
 
 func exit():

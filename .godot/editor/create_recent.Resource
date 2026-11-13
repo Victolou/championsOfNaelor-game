@@ -1,4 +1,6 @@
+Skill
+CrossPattern
+TargetPattern
 SwordPattern
 CharacterStats
-Skill
 Resource

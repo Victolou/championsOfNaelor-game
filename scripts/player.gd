@@ -31,8 +31,16 @@ func emit_attack_frame():
 	attack_frame.emit()
 	
 func _on_frame_changed() -> void:
-	if animated_sprite_2d.animation != "basic_attack":
+	if not $StateMachine.current_state is AttackState:
 		return
 
-	if animated_sprite_2d.frame == basic_attack_frame:
-		emit_attack_frame()
+	var attack_state: AttackState = $StateMachine.current_state
+
+	if attack_state.attack_type == AttackState.AttackType.BASIC:
+		if animated_sprite_2d.frame == basic_attack_frame:
+			emit_attack_frame()
+		return
+
+	if attack_state.current_skill != null:
+		if animated_sprite_2d.frame == attack_state.current_skill.attack_frame:
+			emit_attack_frame()

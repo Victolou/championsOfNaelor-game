@@ -7,7 +7,6 @@ var current_state: State
 
 
 func _ready():
-
 	# Recorremos todos los estados hijos de la máquina.
 	# (IdleState, MoveState, AttackState, etc.)
 	for child in get_children():
@@ -20,9 +19,11 @@ func _ready():
 		# para que pueda cambiar de estado cuando lo necesite.
 		child.state_machine = self
 
+	# Esperamos a que el Player termine su _ready()
+	await get_parent().ready
+	
 	# Al iniciar el juego comenzamos en el estado Idle.
 	change_state($IdleState)
-
 
 func _process(delta):
 

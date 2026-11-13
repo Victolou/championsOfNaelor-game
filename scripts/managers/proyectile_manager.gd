@@ -1,15 +1,23 @@
 class_name ProjectileManager
 extends Node2D
 
+signal projectile_started
+signal projectile_finished
+
+var battle: Battle
+
 func spawn(projectile_scene: PackedScene, parent_entity: Entity) -> Projectile:
 	var projectile = projectile_scene.instantiate()
+	
+	projectile_started.emit()
 
 	add_child(projectile)
-
+	
 	projectile.parent_entity = parent_entity
 	projectile.grid_manager = parent_entity.grid_manager
 	projectile.current_tile = parent_entity.current_tile
 	projectile.direction = parent_entity.get_direction()
+	projectile.projectile_manager = self
 
 	var spawn_position = parent_entity.current_tile.global_position
 
@@ -25,3 +33,4 @@ func spawn(projectile_scene: PackedScene, parent_entity: Entity) -> Projectile:
 	projectile.launch()
 
 	return projectile
+	

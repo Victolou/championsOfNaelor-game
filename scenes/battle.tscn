@@ -4,14 +4,136 @@
 [ext_resource type="PackedScene" uid="uid://dpw3qvkhq1rqs" path="res://scenes/managers/grid_manager.tscn" id="2_a12nh"]
 [ext_resource type="PackedScene" uid="uid://b125vtgef5s1h" path="res://scenes/player.tscn" id="3_lpir7"]
 [ext_resource type="PackedScene" uid="uid://e7cyj7ff3k5l" path="res://scenes/managers/proyectile_manager.tscn" id="4_a12nh"]
+[ext_resource type="Script" uid="uid://cbwo7cj87pjpl" path="res://scripts/UI/skills.gd" id="5_lpir7"]
+[ext_resource type="Texture2D" uid="uid://cle5nxolpa815" path="res://assets/default_icons.png" id="6_6vh42"]
 
 [node name="Battle" type="Node2D" unique_id=176282498]
 script = ExtResource("1_p1qf1")
 
 [node name="Player" parent="." unique_id=113697057 instance=ExtResource("3_lpir7")]
+basic_attack_frame = 3
+
+[node name="Player2" parent="." unique_id=47085903 instance=ExtResource("3_lpir7")]
+basic_attack_frame = 3
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=862318149]
 
 [node name="GridManager" parent="." unique_id=2131940729 instance=ExtResource("2_a12nh")]
 
 [node name="ProyectileManager" parent="." unique_id=7644906 instance=ExtResource("4_a12nh")]
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=37698090]
+
+[node name="SkillsUI" type="Control" parent="UI" unique_id=112327833]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -53.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("5_lpir7")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/SkillsUI" unique_id=1804190276]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -224.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
+
+[node name="ControlContainer" type="GridContainer" parent="UI/SkillsUI/HBoxContainer" unique_id=513446281]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+columns = 3
+
+[node name="Space0" type="Control" parent="UI/SkillsUI/HBoxContainer/ControlContainer" unique_id=686473514]
+layout_mode = 2
+
+[node name="Up" type="Button" parent="UI/SkillsUI/HBoxContainer/ControlContainer" unique_id=1740107574]
+layout_mode = 2
+icon = ExtResource("6_6vh42")
+
+[node name="Space1" type="Control" parent="UI/SkillsUI/HBoxContainer/ControlContainer" unique_id=219351957]
+layout_mode = 2
+
+[node name="Left" type="Button" parent="UI/SkillsUI/HBoxContainer/ControlContainer" unique_id=1214862284]
+layout_mode = 2
+icon = ExtResource("6_6vh42")
+
+[node name="Space2" type="Control" parent="UI/SkillsUI/HBoxContainer/ControlContainer" unique_id=2057641674]
+layout_mode = 2
+
+[node name="Right" type="Button" parent="UI/SkillsUI/HBoxContainer/ControlContainer" unique_id=2117319364]
+layout_mode = 2
+icon = ExtResource("6_6vh42")
+
+[node name="Space3" type="Control" parent="UI/SkillsUI/HBoxContainer/ControlContainer" unique_id=336363825]
+layout_mode = 2
+
+[node name="Below" type="Button" parent="UI/SkillsUI/HBoxContainer/ControlContainer" unique_id=799425764]
+layout_mode = 2
+icon = ExtResource("6_6vh42")
+
+[node name="space" type="Control" parent="UI/SkillsUI/HBoxContainer" unique_id=945132970]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/SkillsUI/HBoxContainer" unique_id=675909182]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="SkillsConteiner" type="HBoxContainer" parent="UI/SkillsUI/HBoxContainer/MarginContainer" unique_id=184373766]
+layout_mode = 2
+
+[node name="Pasive" type="TextureRect" parent="UI/SkillsUI/HBoxContainer/MarginContainer/SkillsConteiner" unique_id=877589327]
+layout_mode = 2
+
+[node name="ButtonsConteiner" type="VBoxContainer" parent="UI/SkillsUI/HBoxContainer/MarginContainer/SkillsConteiner" unique_id=1201676658]
+layout_mode = 2
+
+[node name="Skills" type="GridContainer" parent="UI/SkillsUI/HBoxContainer/MarginContainer/SkillsConteiner/ButtonsConteiner" unique_id=2117138818]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 4
+
+[node name="Skill1" type="Button" parent="UI/SkillsUI/HBoxContainer/MarginContainer/SkillsConteiner/ButtonsConteiner/Skills" unique_id=1366254218]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+offset_transform_position = Vector2(-70, -30)
+expand_icon = true
+
+[node name="Skill2" type="Button" parent="UI/SkillsUI/HBoxContainer/MarginContainer/SkillsConteiner/ButtonsConteiner/Skills" unique_id=1060449586]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+offset_transform_position = Vector2(-140, -20)
+expand_icon = true
+
+[node name="Skill3" type="Button" parent="UI/SkillsUI/HBoxContainer/MarginContainer/SkillsConteiner/ButtonsConteiner/Skills" unique_id=399896398]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+offset_transform_position = Vector2(-210, -10)
+expand_icon = true
+
+[node name="Skill4" type="Button" parent="UI/SkillsUI/HBoxContainer/MarginContainer/SkillsConteiner/ButtonsConteiner/Skills" unique_id=1271989218]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+offset_transform_position = Vector2(-280, 0)
+expand_icon = true
+
+[node name="AttackBasic" type="Button" parent="UI/SkillsUI/HBoxContainer/MarginContainer/SkillsConteiner/ButtonsConteiner" unique_id=1304264682]
+layout_mode = 2
+size_flags_horizontal = 3
+icon = ExtResource("6_6vh42")
+expand_icon = true

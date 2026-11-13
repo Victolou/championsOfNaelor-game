@@ -12,6 +12,9 @@ func initialize(character, battle_grid):
 # Intenta realizar el movimiento en la dirección del input.
 # Si el Grid lo autoriza, inicia el desplazamiento AL Tiled vecino.
 func try_move(direction):
+	if parent_entity.get_parent().can_act() == false:
+		return
+
 	if parent_entity.moving:
 		return
 

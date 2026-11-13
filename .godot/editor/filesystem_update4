@@ -1,6 +1,9 @@
-res://scenes/proyectile.tscn
-res://scripts/entity.gd
-res://scripts/managers/proyectile_manager.gd
-res://scripts/components/movement_component.gd
+res://scenes/battle.tscn
+res://resource/skills/sword.tres
+res://resource/skills/cross.tres
+res://resource/skills/fireball.tres
+res://resource/skills/fivewave.tres
+res://scripts/UI/skills.gd
 res://scripts/battle.gd
-res://scripts/targeting/swordPattern.gd
+res://scripts/managers/grid_manager.gd
+res://scripts/components/combat_component.gd

@@ -1,8 +1,8 @@
 class_name GridManager
 extends Node2D
 
-const WIDTH = 6
-const HEIGHT = 3
+const WIDTH = 8
+const HEIGHT = 4
 var TILE_SIZE: Vector2
 
 var CENTER: Vector2
