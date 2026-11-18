@@ -7,8 +7,8 @@ var direction: Vector2i
 var grid_manager: GridManager
 var projectile_manager: ProjectileManager
 
-@export var spawn_offset := Vector2.ZERO
-@export var speed := 300.0
+@export var spawn_offset: Vector2 = Vector2.ZERO
+@export var speed: float = 300.0
 
 
 func launch() -> void:
@@ -17,16 +17,16 @@ func launch() -> void:
 
 
 func move_one_tile() -> bool:
-	var next_tile = grid_manager.get_neighbor(current_tile, direction)
+	var next_tile: Tile = grid_manager.get_neighbor(current_tile, direction)
 
 	if next_tile == null:
 		finish()
 		return false
 
-	var distance = global_position.distance_to(next_tile.global_position)
-	var duration = distance / speed
+	var distance: float = global_position.distance_to(next_tile.global_position)
+	var duration: float = distance / speed
 
-	var tween = create_tween()
+	var tween: Tween = create_tween()
 
 	tween.tween_property(
 		self,
@@ -42,13 +42,13 @@ func move_one_tile() -> bool:
 	current_tile = next_tile
 
 	if !next_tile.is_empty():
-		var target = next_tile.occupant
+		var target: Entity = next_tile.occupant
 
 		if projectile_manager.battle.battle_over:
 			finish()
 			return false
 
-		var damage := 10
+		var damage: int = 10
 		if parent_entity.stats != null:
 			damage = parent_entity.stats.attack
 

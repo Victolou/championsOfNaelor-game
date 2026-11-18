@@ -9,7 +9,7 @@ var parent_entity: Entity
 var current_skill: Skill
 var projectile_manager: ProjectileManager
 
-var is_basic_attack := false
+var is_basic_attack: bool = false
 var cooldowns: Dictionary = {}
 
 func initialize(character: Entity, manager: ProjectileManager) -> void:
@@ -44,12 +44,12 @@ func use_basic_attack() -> void:
 func use_skill(skill: Skill) -> void:
 	cooldowns[skill] = skill.cooldown
 
-	var targets = skill.target_pattern.get_tiles(
+	var targets: Array[Tile] = skill.target_pattern.get_tiles(
 		parent_entity.grid_manager,
 		parent_entity
 	)
 
-	for tile in targets:
+	for tile: Tile in targets:
 		if tile.occupant != null:
 			tile.occupant.health.take_damage(
 				skill.damage

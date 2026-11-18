@@ -7,7 +7,7 @@ signal projectile_finished
 var battle: Battle
 
 func spawn(projectile_scene: PackedScene, parent_entity: Entity) -> Projectile:
-	var projectile = projectile_scene.instantiate()
+	var projectile: Projectile = projectile_scene.instantiate() as Projectile
 	
 	projectile_started.emit()
 
@@ -19,7 +19,7 @@ func spawn(projectile_scene: PackedScene, parent_entity: Entity) -> Projectile:
 	projectile.direction = parent_entity.get_direction()
 	projectile.projectile_manager = self
 
-	var spawn_position = parent_entity.current_tile.global_position
+	var spawn_position: Vector2 = parent_entity.current_tile.global_position
 
 	if projectile.direction == Vector2i.RIGHT:
 		spawn_position.x += parent_entity.grid_manager.TILE_SIZE.x / 2
@@ -33,4 +33,3 @@ func spawn(projectile_scene: PackedScene, parent_entity: Entity) -> Projectile:
 	projectile.launch()
 
 	return projectile
-	

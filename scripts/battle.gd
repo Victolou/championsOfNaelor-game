@@ -8,12 +8,12 @@ extends Node2D
 @onready var proyectile_manager: ProjectileManager = $ProyectileManager
 @onready var skills_ui: SkillsUI = $UI/SkillsUI
 
-@export var screen_margin := 100.0
+@export var screen_margin: float = 100.0
 
-var battle_over := false
-var pending_actions := 0
+var battle_over: bool = false
+var pending_actions: int = 0
 
-func _ready():
+func _ready() -> void:
 	player.initialize(
 		grid_manager,
 		true,
@@ -44,20 +44,20 @@ func _ready():
 	_center_camera()
 
 # Centra la cámara en el tablero
-func _center_camera():
+func _center_camera() -> void:
 	camera_2d.global_position = grid_manager.get_center_grid()
 
-	var grid_size = Vector2(
+	var grid_size: Vector2 = Vector2(
 		grid_manager.WIDTH * grid_manager.TILE_SIZE.x,
 		grid_manager.HEIGHT * grid_manager.TILE_SIZE.y
 	)
 
-	var viewport_size = get_viewport_rect().size - Vector2(screen_margin, screen_margin)
+	var viewport_size: Vector2 = get_viewport_rect().size - Vector2(screen_margin, screen_margin)
 
-	var zoom_x = viewport_size.x / grid_size.x
-	var zoom_y = viewport_size.y / grid_size.y
+	var zoom_x: float = viewport_size.x / grid_size.x
+	var zoom_y: float = viewport_size.y / grid_size.y
 
-	var zoom_value = min(zoom_x, zoom_y)
+	var zoom_value: float = min(zoom_x, zoom_y)
 
 	# Alejar un poco el zoom
 	zoom_value *= 0.90
@@ -67,7 +67,7 @@ func _center_camera():
 
 # Establece dónde aparecerá el jugador al iniciar la partida
 func _spawn_entity(entity: Entity, x: int, y: int) -> void:
-	var start_tile = grid_manager.get_tile(x, y)
+	var start_tile: Tile = grid_manager.get_tile(x, y)
 
 	entity.current_tile = start_tile
 	start_tile.enter(entity)
