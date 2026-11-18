@@ -191,7 +191,7 @@ animations = [{
 
 [node name="Player" type="CharacterBody2D" unique_id=113697057]
 script = ExtResource("1_3vyb7")
-basic_attack_frame = null
+basic_attack_frame = 3
 skills = Array[ExtResource("2_3v2ag")]([ExtResource("3_jej6c"), ExtResource("4_a8ls1"), ExtResource("5_qfm1y"), ExtResource("6_fulsm")])
 stats = ExtResource("4_f1ej7")
 
