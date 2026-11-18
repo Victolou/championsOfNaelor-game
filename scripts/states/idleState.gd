@@ -1,11 +1,11 @@
 class_name IdleState
 extends State
 
-func enter():
+func enter() -> void:
 	print("idle")
 	entity.animated_sprite_2d.play("idle")
 
-func handle_input(_event):
+func handle_input(_event: InputEvent) -> void:
 	if entity.get_parent().can_act() == false:
 		return
 
@@ -21,7 +21,7 @@ func handle_input(_event):
 		return
 		
 	if Input.is_action_just_pressed("skill_1"):
-		var skill = entity.skills[0]
+		var skill: Skill = entity.skills[0]
 
 		if not entity.combat.is_skill_ready(skill):
 			return
@@ -33,7 +33,7 @@ func handle_input(_event):
 		return
 		
 	if Input.is_action_just_pressed("skill_2"):
-		var skill = entity.skills[1]
+		var skill: Skill = entity.skills[1]
 
 		if not entity.combat.is_skill_ready(skill):
 			return
@@ -45,7 +45,7 @@ func handle_input(_event):
 		return
 		
 	if Input.is_action_just_pressed("skill_3"):
-		var skill = entity.skills[2]
+		var skill: Skill = entity.skills[2]
 
 		if not entity.combat.is_skill_ready(skill):
 			return
@@ -57,7 +57,7 @@ func handle_input(_event):
 		return
 		
 	if Input.is_action_just_pressed("skill_4"):
-		var skill = entity.skills[3]
+		var skill: Skill = entity.skills[3]
 
 		if not entity.combat.is_skill_ready(skill):
 			return

@@ -14,7 +14,7 @@ func _process(_delta: float) -> void:
 	if entity == null:
 		return
 
-	var buttons = [
+	var buttons: Array[Button] = [
 		skill_1,
 		skill_2,
 		skill_3,
@@ -25,7 +25,7 @@ func _process(_delta: float) -> void:
 		var skill: Skill = entity.skills[i]
 		var button: Button = buttons[i]
 
-		var cooldown = entity.combat.get_skill_cooldown(skill)
+		var cooldown: float = entity.combat.get_skill_cooldown(skill)
 
 		if cooldown > 0.0:
 			button.text = "%.1f" % cooldown
@@ -40,7 +40,7 @@ func initialize(character: Entity) -> void:
 
 func _update_skills() -> void:
 	for i in range(entity.skills.size()):
-		var button: Button = skills.get_child(i)
+		var button: Button = skills.get_child(i) as Button
 		var skill: Skill = entity.skills[i]
 		
 		button.icon = skill.icon
