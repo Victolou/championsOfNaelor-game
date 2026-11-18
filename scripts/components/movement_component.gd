@@ -3,11 +3,15 @@ extends Node
 
 var parent_entity
 var grid
+var move_duration := 0.10
 
 func initialize(character, battle_grid):
-
 	parent_entity = character
 	grid = battle_grid
+
+	# Usa la duración definida en las estadísticas sin cambiar el valor actual.
+	if parent_entity.stats != null:
+		move_duration = parent_entity.stats.move_speed
 
 # Intenta realizar el movimiento en la dirección del input.
 # Si el Grid lo autoriza, inicia el desplazamiento AL Tiled vecino.
@@ -45,7 +49,7 @@ func move_animation(tile):
 		parent_entity,
 		"global_position",
 		tile.global_position,
-		0.10
+		move_duration
 	)
 
 	await tween.finished
