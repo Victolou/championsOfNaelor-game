@@ -1,11 +1,11 @@
 class_name MovementComponent
 extends Node
 
-var parent_entity
-var grid
-var move_duration := 0.10
+var parent_entity: Entity
+var grid: GridManager
+var move_duration: float = 0.10
 
-func initialize(character, battle_grid):
+func initialize(character: Entity, battle_grid: GridManager) -> void:
 	parent_entity = character
 	grid = battle_grid
 
@@ -15,14 +15,14 @@ func initialize(character, battle_grid):
 
 # Intenta realizar el movimiento en la dirección del input.
 # Si el Grid lo autoriza, inicia el desplazamiento AL Tiled vecino.
-func try_move(direction):
+func try_move(direction: Vector2i) -> void:
 	if parent_entity.get_parent().can_act() == false:
 		return
 
 	if parent_entity.moving:
 		return
 
-	var next = grid.get_neighbor(
+	var next: Tile = grid.get_neighbor(
 		parent_entity.current_tile,
 		direction
 		)
@@ -40,7 +40,7 @@ func try_move(direction):
 		move_animation(next)
 
 # Realiza la animación de desplazamiento hacia el Tiled del destino.
-func move_animation(tile):
+func move_animation(tile: Tile) -> void:
 	parent_entity.moving = true
 
 	var tween = parent_entity.create_tween()
