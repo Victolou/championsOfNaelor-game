@@ -10,6 +10,8 @@ extends Resource
 
 @export var damage: int
 
+@export_enum("Physical", "Magical", "Pure") var damage_type: int = DamageInfo.DamageType.PHYSICAL
+
 @export var cooldown: float
 
 @export var icon: Texture2D

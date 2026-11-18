@@ -12,9 +12,17 @@ var current_tile: Tile
 var moving: bool = false
 var grid_manager: GridManager
 var is_red: bool = false
+var damage_component: DamageComponent
+
 
 func _ready() -> void:
 	health.died.connect(_on_died)
+
+	damage_component = DamageComponent.new()
+	damage_component.name = "DamageComponent"
+	add_child(damage_component)
+	damage_component.initialize(self)
+
 
 func initialize(
 	battle_grid: GridManager,
@@ -30,13 +38,34 @@ func initialize(
 		health.initialize(stats)
 
 	combat.initialize(self, projectile_manager)
-	
+
+
+func receive_damage(
+	amount: int,
+	source: Entity = null,
+	skill: Skill = null,
+	damage_type: int = DamageInfo.DamageType.PHYSICAL
+) -> int:
+	if damage_component == null:
+		return 0
+
+	var damage_info := DamageInfo.new(
+		amount,
+		source,
+		skill,
+		damage_type
+	)
+
+	return damage_component.apply_damage(damage_info)
+
+
 func get_direction() -> Vector2i:
 	if is_red:
 		return Vector2i.RIGHT
 	else:
 		return Vector2i.LEFT
-		
+
+
 func _on_died() -> void:
 	var dead_state: DeadState = $StateMachine/DeadState
 	$StateMachine.change_state(dead_state)

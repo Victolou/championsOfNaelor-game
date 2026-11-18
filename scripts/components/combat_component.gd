@@ -12,6 +12,7 @@ var projectile_manager: ProjectileManager
 var is_basic_attack: bool = false
 var cooldowns: Dictionary = {}
 
+
 func initialize(character: Entity, manager: ProjectileManager) -> void:
 	parent_entity = character
 	projectile_manager = manager
@@ -22,11 +23,13 @@ func initialize(character: Entity, manager: ProjectileManager) -> void:
 	if not parent_entity.attack_frame.is_connected(_on_attack_frame):
 		parent_entity.attack_frame.connect(_on_attack_frame)
 
+
 func _process(delta: float) -> void:
 	# Actualiza todos los cooldowns activos.
 	for skill in cooldowns:
 		if cooldowns[skill] > 0.0:
 			cooldowns[skill] = maxf(cooldowns[skill] - delta, 0.0)
+
 
 # =========================
 # ATAQUE BÁSICO
@@ -97,7 +100,12 @@ func use_skill(skill: Skill) -> void:
 			if target.health == null:
 				continue
 
-			target.health.take_damage(skill.damage)
+			target.receive_damage(
+				skill.damage,
+				parent_entity,
+				skill,
+				skill.damage_type
+			)
 			continue
 
 		for effect: SkillEffect in skill.effects:
@@ -105,6 +113,7 @@ func use_skill(skill: Skill) -> void:
 				continue
 
 			effect.apply(parent_entity, target, skill)
+
 
 func is_skill_ready(skill: Skill) -> bool:
 	if skill == null:
@@ -114,6 +123,7 @@ func is_skill_ready(skill: Skill) -> bool:
 		return true
 
 	return cooldowns[skill] <= 0.0
+
 
 func get_skill_cooldown(skill: Skill) -> float:
 	if skill == null:
@@ -144,6 +154,7 @@ func _can_perform_action() -> bool:
 			return false
 
 	return true
+
 
 func _on_attack_frame() -> void:
 	if is_basic_attack:

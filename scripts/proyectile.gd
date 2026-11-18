@@ -96,7 +96,7 @@ func move_one_tile() -> bool:
 		if parent_entity.stats != null:
 			damage = parent_entity.stats.attack
 
-		target.health.take_damage(damage)
+		target.receive_damage(damage, parent_entity)
 
 		finish()
 		return false
