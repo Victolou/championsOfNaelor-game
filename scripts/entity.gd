@@ -24,6 +24,11 @@ func initialize(
 	grid_manager = battle_grid
 	is_red = red_team
 
+	# Inicializa la vida con las estadísticas del personaje.
+	# Si no hay estadísticas, conserva el HP predeterminado del componente.
+	if stats != null:
+		health.initialize(stats)
+
 	combat.initialize(self, projectile_manager)
 	
 func get_direction() -> Vector2i:
