@@ -9,18 +9,18 @@ extends CharacterBody2D
 @onready var health: HealthComponent = $HealthComponent
 
 var current_tile: Tile
-var moving := false
+var moving: bool = false
 var grid_manager: GridManager
-var is_red: bool
+var is_red: bool = false
 
-func _ready():
+func _ready() -> void:
 	health.died.connect(_on_died)
 
 func initialize(
 	battle_grid: GridManager,
 	red_team: bool,
 	projectile_manager: ProjectileManager
-):
+) -> void:
 	grid_manager = battle_grid
 	is_red = red_team
 
@@ -37,6 +37,6 @@ func get_direction() -> Vector2i:
 	else:
 		return Vector2i.LEFT
 		
-func _on_died():
+func _on_died() -> void:
 	var dead_state: DeadState = $StateMachine/DeadState
 	$StateMachine.change_state(dead_state)

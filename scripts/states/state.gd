@@ -1,20 +1,20 @@
 class_name State
 extends Node
 
-var entity : Entity
-var state_machine : StateMachine
+var entity: Entity
+var state_machine: StateMachine
 
-func enter():
+func enter() -> void:
 	pass
 
-func exit():
+func exit() -> void:
 	pass
 
-func physics_update(_delta):
+func physics_update(_delta: float) -> void:
 	pass
 
-func update(_delta):
+func update(_delta: float) -> void:
 	pass
 
-func handle_input(_event):
+func handle_input(_event: InputEvent) -> void:
 	pass

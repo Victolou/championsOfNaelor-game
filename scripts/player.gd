@@ -11,7 +11,7 @@ func initialize(
 	battle_grid: GridManager,
 	red_team: bool,
 	projectile_manager: ProjectileManager
-):
+) -> void:
 	super.initialize(
 		battle_grid,
 		red_team,
@@ -23,11 +23,11 @@ func initialize(
 	animated_sprite_2d.frame_changed.connect(_on_frame_changed)
 	
 # Mueve directamente al jugador a un Tiled específicO si el Grid lo autoriza.
-func _move_to_tile(tile):
+func _move_to_tile(tile: Tile) -> void:
 	if grid_manager.move_entity(self, tile):
 		movement_component.move_with_tween(tile)
 		
-func emit_attack_frame():
+func emit_attack_frame() -> void:
 	attack_frame.emit()
 	
 func _on_frame_changed() -> void:

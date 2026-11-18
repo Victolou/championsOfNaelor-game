@@ -12,7 +12,7 @@ var current_skill: Skill
 @export var basic_attack_animation := "basic_attack"
 
 
-func enter():
+func enter() -> void:
 	entity.animated_sprite_2d.animation_finished.connect(_on_animation_finished)
 
 	if attack_type == AttackType.BASIC:
@@ -24,10 +24,10 @@ func enter():
 		entity.animated_sprite_2d.play(current_skill.animation)
 
 
-func exit():
+func exit() -> void:
 	if entity.animated_sprite_2d.animation_finished.is_connected(_on_animation_finished):
 		entity.animated_sprite_2d.animation_finished.disconnect(_on_animation_finished)
 
 
-func _on_animation_finished():
+func _on_animation_finished() -> void:
 	state_machine.change_state(state_machine.get_node("IdleState"))

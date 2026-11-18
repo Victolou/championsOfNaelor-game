@@ -6,7 +6,7 @@ extends Node
 var current_state: State
 
 
-func _ready():
+func _ready() -> void:
 	# Recorremos todos los estados hijos de la máquina.
 	# (IdleState, MoveState, AttackState, etc.)
 	for child in get_children():
@@ -25,47 +25,28 @@ func _ready():
 	# Al iniciar el juego comenzamos en el estado Idle.
 	change_state($IdleState)
 
-func _process(delta):
-
-	# Delegamos la actualización al estado activo.
-	# Si estamos en IdleState se ejecutará IdleState.update().
-	# Si estamos en MoveState se ejecutará MoveState.update().
+func _process(delta: float) -> void:
 	if current_state:
 		current_state.update(delta)
 
 
-func _physics_process(delta):
-
-	# Delegamos toda la lógica de física al estado activo.
-	# Cada estado decidirá si necesita mover al personaje
-	# o realizar alguna otra acción física.
+func _physics_process(delta: float) -> void:
 	if current_state:
 		current_state.physics_update(delta)
 
 
-func _input(event):
-
-	# Delegamos la gestión del teclado, ratón o mando
-	# al estado activo.
+func _input(event: InputEvent) -> void:
 	if current_state:
 		current_state.handle_input(event)
 
 
 # Cambia el estado actual por otro.
-func change_state(new_state: State):
-
-	# Si intentamos cambiar al mismo estado,
-	# no hacemos nada.
+func change_state(new_state: State) -> void:
 	if current_state == new_state:
 		return
 
-	# Si ya existía un estado activo,
-	# ejecutamos su función de salida.
 	if current_state:
 		current_state.exit()
 
-	# Guardamos el nuevo estado como estado activo.
 	current_state = new_state
-
-	# Ejecutamos la función de entrada del nuevo estado.
 	current_state.enter()

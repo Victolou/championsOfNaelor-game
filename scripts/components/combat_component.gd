@@ -12,13 +12,13 @@ var projectile_manager: ProjectileManager
 var is_basic_attack := false
 var cooldowns: Dictionary = {}
 
-func initialize(character, manager: ProjectileManager):
+func initialize(character: Entity, manager: ProjectileManager) -> void:
 	parent_entity = character
 	projectile_manager = manager
 
 	parent_entity.attack_frame.connect(_on_attack_frame)
 
-func _process(delta):
+func _process(delta: float) -> void:
 	for skill in cooldowns:
 		if cooldowns[skill] > 0:
 			cooldowns[skill] -= delta
@@ -41,7 +41,7 @@ func use_basic_attack() -> void:
 # HABILIDADES
 # =========================
 
-func use_skill(skill):
+func use_skill(skill: Skill) -> void:
 	cooldowns[skill] = skill.cooldown
 
 	var targets = skill.target_pattern.get_tiles(
@@ -61,7 +61,7 @@ func is_skill_ready(skill: Skill) -> bool:
 
 	return cooldowns[skill] <= 0
 
-func _on_attack_frame():
+func _on_attack_frame() -> void:
 	if is_basic_attack:
 		use_basic_attack()
 		is_basic_attack = false
