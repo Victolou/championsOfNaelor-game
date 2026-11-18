@@ -3,14 +3,14 @@ extends Node
 
 signal died
 
-signal health_changed(value)
+signal health_changed(value: int)
 
-@export var hp := 100
+@export var hp: int = 100
 
-func initialize(stats):
+func initialize(stats: CharacterStats) -> void:
 	hp = stats.max_hp
 	
-func take_damage(value):
+func take_damage(value: int) -> void:
 	if hp <= 0:
 		return
 	
