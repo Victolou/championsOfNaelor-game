@@ -12,11 +12,34 @@ var projectile_manager: ProjectileManager
 
 
 func launch() -> void:
+	# VALIDACIÓN: evita iniciar el recorrido sin las referencias necesarias.
+	if grid_manager == null:
+		finish()
+		return
+
+	if current_tile == null:
+		finish()
+		return
+
+	if speed <= 0.0:
+		push_error("Projectile: la velocidad debe ser mayor que cero.")
+		finish()
+		return
+
 	while await move_one_tile():
 		pass
 
 
 func move_one_tile() -> bool:
+	# VALIDACIÓN: comprueba las referencias antes de consultar la siguiente casilla.
+	if grid_manager == null:
+		finish()
+		return false
+
+	if current_tile == null:
+		finish()
+		return false
+
 	var next_tile: Tile = grid_manager.get_neighbor(current_tile, direction)
 
 	if next_tile == null:
@@ -44,7 +67,21 @@ func move_one_tile() -> bool:
 	if !next_tile.is_empty():
 		var target: Entity = next_tile.occupant
 
-		if projectile_manager.battle.battle_over:
+		# VALIDACIÓN: evita acceder a entidades o componentes inexistentes.
+		if target == null:
+			finish()
+			return false
+
+		if target.health == null:
+			finish()
+			return false
+
+		if projectile_manager != null and projectile_manager.battle != null:
+			if projectile_manager.battle.battle_over:
+				finish()
+				return false
+
+		if parent_entity == null:
 			finish()
 			return false
 
@@ -58,7 +95,8 @@ func move_one_tile() -> bool:
 		return false
 
 	return true
-	
+
+
 func finish() -> void:
 	if projectile_manager:
 		projectile_manager.projectile_finished.emit()
