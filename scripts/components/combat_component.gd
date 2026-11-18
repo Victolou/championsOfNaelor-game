@@ -47,6 +47,10 @@ func use_skill(skill: Skill) -> void:
 	if skill == null:
 		return
 
+	# VALIDACIÓN: impide ejecutar una habilidad mientras está en cooldown.
+	if not is_skill_ready(skill):
+		return
+
 	if skill.target_pattern == null:
 		return
 
