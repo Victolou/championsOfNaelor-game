@@ -42,6 +42,23 @@ func use_basic_attack() -> void:
 # =========================
 
 func use_skill(skill: Skill) -> void:
+	# VALIDACIÓN: evita ejecutar habilidades o acceder a datos inexistentes.
+	if skill == null:
+		return
+
+	if skill.target_pattern == null:
+		return
+
+	if parent_entity == null:
+		return
+
+	if parent_entity.grid_manager == null:
+		return
+
+	if parent_entity.current_tile == null:
+		return
+
+	# El cooldown se aplica igual que antes cuando la habilidad está correctamente configurada.
 	cooldowns[skill] = skill.cooldown
 
 	var targets: Array[Tile] = skill.target_pattern.get_tiles(
@@ -50,10 +67,19 @@ func use_skill(skill: Skill) -> void:
 	)
 
 	for tile: Tile in targets:
-		if tile.occupant != null:
-			tile.occupant.health.take_damage(
-				skill.damage
-			)
+		# VALIDACIÓN: ignora referencias de casilla u ocupantes no válidas.
+		if tile == null:
+			continue
+
+		if tile.occupant == null:
+			continue
+
+		if tile.occupant.health == null:
+			continue
+
+		tile.occupant.health.take_damage(
+			skill.damage
+		)
 
 func is_skill_ready(skill: Skill) -> bool:
 	if not cooldowns.has(skill):
