@@ -1,36 +1,34 @@
 class_name GridManager
 extends Node2D
 
-const WIDTH = 8
-const HEIGHT = 4
+const WIDTH: int = 8
+const HEIGHT: int = 4
 var TILE_SIZE: Vector2
 
 var CENTER: Vector2
 
-@export var tile_scene:PackedScene
+@export var tile_scene: PackedScene
 
-var tiles:Array = []
+var tiles: Array = []
 
-func _ready():
+func _ready() -> void:
 	_calculate_size_tile()
-
 	_create_grid()
-
 	_set_center_grid()
 
 # Para generar el conjunto de Tile.
-func _create_grid():
+func _create_grid() -> void:
 	for x in range(WIDTH):
 		tiles.append([])
 		
 		for y in range(HEIGHT):
-			var tile = tile_scene.instantiate()
+			var tile: Tile = tile_scene.instantiate() as Tile
 			add_child(tile)
 
 			tile.grid_x = x
 			tile.grid_y = y
 			
-			var middle = ceili(WIDTH / 2.0)
+			var middle: int = ceili(WIDTH / 2.0)
 
 			if x < middle:
 				tile.faction = Tile.Faction.RED
@@ -59,22 +57,22 @@ func get_center_grid() -> Vector2:
 
 # Obtiene el Tile en las coordenadas dadas.
 # Si las coordenadas están fuera de los límites del mapa (WIDTH o HEIGHT), devuelve null.
-func get_tile(x: int, y: int):
+func get_tile(x: int, y: int) -> Tile:
 	if x < 0 or x >= WIDTH:
 		return null
 	if y < 0 or y >= HEIGHT:
 		return null
 
-	return tiles[x][y]
+	return tiles[x][y] as Tile
 
 # Obtiene el Tile vecino en base de un Tile inicial y una dirección (Vector2i).
-func get_neighbor(tile:Tile, direction:Vector2i):
+func get_neighbor(tile: Tile, direction: Vector2i) -> Tile:
 	return get_tile(
 		tile.grid_x + direction.x,
 		tile.grid_y + direction.y
 		)
 
-func get_neighbor_facing(tile, facing):
+func get_neighbor_facing(tile: Tile, facing: Vector2i) -> Tile:
 	if facing == Vector2i.LEFT:
 		return get_left(tile)
 
@@ -85,22 +83,21 @@ func get_neighbor_facing(tile, facing):
 
 # Funciones de conveniencia para obtener Tiles vecinos en direcciones específicas
 # (Útiles para comprobar el estado o los ocupantes de los Tiles de alrededor)
-func get_left(tile):
+func get_left(tile: Tile) -> Tile:
 	return get_tile(tile.grid_x - 1, tile.grid_y)
 
-func get_right(tile):
+func get_right(tile: Tile) -> Tile:
 	return get_tile(tile.grid_x + 1, tile.grid_y)
 
-func get_up(tile):
+func get_up(tile: Tile) -> Tile:
 	return get_tile(tile.grid_x, tile.grid_y - 1)
 
-func get_down(tile):
+func get_down(tile: Tile) -> Tile:
 	return get_tile(tile.grid_x, tile.grid_y + 1)
 
 # Evalúa si una entidad puede moverse al Tile de destino.
 # Para ser válida, la casilla debe existir, estar vacía y pertenecer a un color de la entidad
-func can_move(tile, entity):
-
+func can_move(tile: Tile, entity: Entity) -> bool:
 	if tile == null:
 		return false
 
@@ -114,25 +111,20 @@ func can_move(tile, entity):
 
 # Gestiona la lógica de trasladar una entidad a un Tile de destino.
 # Si el movimiento es válido, actualiza las referencias de ocupación en ambos Tile y devuelve true.
-func move_entity(entity, destination:Tile):
-
+func move_entity(entity: Entity, destination: Tile) -> bool:
 	if !can_move(destination, entity):
 		return false
 
 	entity.current_tile.exit()
-
 	destination.enter(entity)
-
 	entity.current_tile = destination
 
 	return true
 
 # Instancia un Tile temporal para medir sus dimensiones físicas y luego la destruye.
 func _calculate_size_tile() -> void:
-	var temp_tile = tile_scene.instantiate()
-
+	var temp_tile: Tile = tile_scene.instantiate() as Tile
 	add_child(temp_tile)
 
 	TILE_SIZE = temp_tile.get_texture_size()
-
 	temp_tile.queue_free()

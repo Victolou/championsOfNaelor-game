@@ -1,8 +1,8 @@
 class_name Tile
 extends Node2D
 
-signal entity_entered(entity)
-signal entity_exited(entity)
+signal entity_entered(entity: Entity)
+signal entity_exited(entity: Entity)
 
 enum Faction
 {
@@ -14,22 +14,21 @@ var faction: Faction
 
 var current_border_color: Color
 
-var grid_x:int
-var grid_y:int
+var grid_x: int
+var grid_y: int
 
-var occupant = null
+var occupant: Entity = null
 @onready var border: Sprite2D = $Border
 
-func _ready():
+func _ready() -> void:
 	entity_entered.connect(_on_entered)
 	entity_exited.connect(_on_exited)
 	
-func _on_entered(_entity):
+func _on_entered(_entity: Entity) -> void:
 	border.modulate = Color(0.993, 0.802, 0.367, 1.0)
 
-func _on_exited(_entity):
+func _on_exited(_entity: Entity) -> void:
 	border.modulate = current_border_color
-
 
 # Obtiene los valores del tamaño del tile
 func get_texture_size() -> Vector2:
@@ -39,12 +38,11 @@ func get_texture_size() -> Vector2:
 func is_empty() -> bool:
 	return occupant == null
 
-func enter(entity):
+func enter(entity: Entity) -> void:
 	occupant = entity
-
 	entity_entered.emit(entity)
 	
-func exit():
+func exit() -> void:
 	if occupant != null:
 		entity_exited.emit(occupant)
 
@@ -53,4 +51,4 @@ func exit():
 # Establece el color de los bordes de los tiles
 func set_border_color(color: Color) -> void:
 	border.modulate = color
-	current_border_color = color	
+	current_border_color = color

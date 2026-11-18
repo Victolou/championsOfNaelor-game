@@ -1,9 +1,8 @@
 class_name SwordPattern
 extends TargetPattern
 
-func get_tiles(grid, user):
-
-	var tile = grid.get_neighbor(
+func get_tiles(grid: GridManager, user: Entity) -> Array[Tile]:
+	var tile: Tile = grid.get_neighbor(
 		user.current_tile,
 		user.get_direction()
 	)

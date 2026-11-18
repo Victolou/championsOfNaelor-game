@@ -1,11 +1,10 @@
 class_name CrossPattern
 extends TargetPattern
 
-func get_tiles(grid, user):
+func get_tiles(grid: GridManager, user: Entity) -> Array[Tile]:
+	var tiles: Array[Tile] = []
 
-	var tiles = []
-
-	var directions = [
+	var directions: Array[Vector2i] = [
 		Vector2i.UP,
 		Vector2i.DOWN,
 		Vector2i.LEFT,
@@ -13,7 +12,7 @@ func get_tiles(grid, user):
 	]
 
 	for direction in directions:
-		var tile = grid.get_neighbor(
+		var tile: Tile = grid.get_neighbor(
 			user.current_tile,
 			direction
 		)
