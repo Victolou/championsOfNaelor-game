@@ -13,7 +13,7 @@ func initialize(stats: CharacterStats) -> void:
 		return
 
 	hp = stats.max_hp
-	
+
 func take_damage(value: int) -> void:
 	if hp <= 0:
 		return
@@ -21,9 +21,10 @@ func take_damage(value: int) -> void:
 	# VALIDACIÓN: el daño negativo no debe convertirse en curación accidental.
 	if value < 0:
 		return
-	
-	hp -= value
-	
+
+	# MEJORA: evita que la vida baje de cero al recibir daño excesivo.
+	hp = maxi(hp - value, 0)
+
 	health_changed.emit(hp)
 
 	if hp <= 0:
