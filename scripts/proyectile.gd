@@ -10,9 +10,13 @@ var projectile_manager: ProjectileManager
 @export var spawn_offset: Vector2 = Vector2.ZERO
 @export var speed: float = 300.0
 
+var is_finished: bool = false
+
 
 func launch() -> void:
-	# VALIDACIÓN: evita iniciar el recorrido sin las referencias necesarias.
+	if is_finished:
+		return
+
 	if grid_manager == null:
 		finish()
 		return
@@ -31,7 +35,9 @@ func launch() -> void:
 
 
 func move_one_tile() -> bool:
-	# VALIDACIÓN: comprueba las referencias antes de consultar la siguiente casilla.
+	if is_finished:
+		return false
+
 	if grid_manager == null:
 		finish()
 		return false
@@ -48,7 +54,6 @@ func move_one_tile() -> bool:
 
 	var distance: float = global_position.distance_to(next_tile.global_position)
 	var duration: float = distance / speed
-
 	var tween: Tween = create_tween()
 
 	tween.tween_property(
@@ -60,14 +65,20 @@ func move_one_tile() -> bool:
 
 	await tween.finished
 
-	# Ahora que el proyectil ha llegado visualmente a la casilla,
-	# actualizamos su Tile actual.
+	if is_finished:
+		return false
+
+	# Si la partida terminó durante el desplazamiento, retira el proyectil.
+	if projectile_manager != null and projectile_manager.battle != null:
+		if projectile_manager.battle.battle_over:
+			finish()
+			return false
+
 	current_tile = next_tile
 
-	if !next_tile.is_empty():
+	if not next_tile.is_empty():
 		var target: Entity = next_tile.occupant
 
-		# VALIDACIÓN: evita acceder a entidades o componentes inexistentes.
 		if target == null:
 			finish()
 			return false
@@ -76,16 +87,12 @@ func move_one_tile() -> bool:
 			finish()
 			return false
 
-		if projectile_manager != null and projectile_manager.battle != null:
-			if projectile_manager.battle.battle_over:
-				finish()
-				return false
-
 		if parent_entity == null:
 			finish()
 			return false
 
 		var damage: int = 10
+
 		if parent_entity.stats != null:
 			damage = parent_entity.stats.attack
 
@@ -98,7 +105,13 @@ func move_one_tile() -> bool:
 
 
 func finish() -> void:
-	if projectile_manager:
+	# Evita emitir projectile_finished más de una vez.
+	if is_finished:
+		return
+
+	is_finished = true
+
+	if projectile_manager != null:
 		projectile_manager.projectile_finished.emit()
 
 	queue_free()
