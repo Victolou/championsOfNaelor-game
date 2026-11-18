@@ -3,6 +3,9 @@ extends Resource
 
 @export var target_pattern: TargetPattern
 
+# Efectos adicionales que se aplican a cada objetivo alcanzado.
+@export var effects: Array[SkillEffect] = []
+
 @export var skill_name: String
 
 @export var damage: int

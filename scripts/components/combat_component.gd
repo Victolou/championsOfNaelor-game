@@ -83,16 +83,28 @@ func use_skill(skill: Skill) -> void:
 		if tile == null:
 			continue
 
-		if tile.occupant == null:
+		var target: Entity = tile.occupant
+
+		if target == null:
 			continue
 
-		if tile.occupant == parent_entity:
+		if target == parent_entity:
 			continue
 
-		if tile.occupant.health == null:
+		# Las habilidades antiguas siguen aplicando su daño directamente.
+		# Si hay efectos configurados, cada efecto decide qué hacer con el objetivo.
+		if skill.effects.is_empty():
+			if target.health == null:
+				continue
+
+			target.health.take_damage(skill.damage)
 			continue
 
-		tile.occupant.health.take_damage(skill.damage)
+		for effect: SkillEffect in skill.effects:
+			if effect == null:
+				continue
+
+			effect.apply(parent_entity, target, skill)
 
 func is_skill_ready(skill: Skill) -> bool:
 	if skill == null:
