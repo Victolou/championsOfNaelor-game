@@ -19,31 +19,32 @@ func _ready() -> void:
 		true,
 		proyectile_manager
 	)
-	
+
 	skills_ui.initialize(player)
-	
+
 	proyectile_manager.battle = self
-	
+
 	player_2.initialize(
 		grid_manager,
 		false,
 		proyectile_manager
 	)
-	
+
 	player_2.health.hp = 1000
-	
+
 	player.health.died.connect(_on_player_died)
 	player_2.health.died.connect(_on_player_died)
 
 	proyectile_manager.projectile_finished.connect(_on_projectile_finished)
 	proyectile_manager.projectile_started.connect(_on_projectile_started)
-	
+
 	_spawn_entity(player_2, 5, 1)
 	_spawn_entity(player, 2, 1)
-	
+
 	_center_camera()
 
-# Centra la cámara en el tablero
+
+# Centra la cámara en el tablero.
 func _center_camera() -> void:
 	camera_2d.global_position = grid_manager.get_center_grid()
 
@@ -56,23 +57,25 @@ func _center_camera() -> void:
 
 	var zoom_x: float = viewport_size.x / grid_size.x
 	var zoom_y: float = viewport_size.y / grid_size.y
-
 	var zoom_value: float = min(zoom_x, zoom_y)
 
-	# Alejar un poco el zoom
+	# Alejar un poco el zoom.
 	zoom_value *= 0.90
-
 	camera_2d.zoom = Vector2(zoom_value, zoom_value)
 
 
-# Establece dónde aparecerá el jugador al iniciar la partida
+# Establece dónde aparecerá una entidad al iniciar la partida.
 func _spawn_entity(entity: Entity, x: int, y: int) -> void:
 	var start_tile: Tile = grid_manager.get_tile(x, y)
 
+	if entity == null or start_tile == null:
+		push_error("Battle: no se pudo establecer la posición inicial de una entidad.")
+		return
+
 	entity.current_tile = start_tile
 	start_tile.enter(entity)
-
 	entity.global_position = start_tile.global_position
+
 
 func check_battle_result() -> void:
 	if battle_over:
@@ -93,19 +96,28 @@ func check_battle_result() -> void:
 		print("¡GANA PLAYER!")
 		return
 
+
 func is_battle_over() -> bool:
 	return battle_over
 
+
 func can_act() -> bool:
-	return !battle_over
-	
+	return not battle_over
+
+
 func _on_player_died() -> void:
 	check_battle_result()
+
 
 func _on_projectile_started() -> void:
 	pending_actions += 1
 
+
 func _on_projectile_finished() -> void:
+	# Evita que el contador quede negativo por una finalización duplicada.
+	if pending_actions <= 0:
+		return
+
 	pending_actions -= 1
 
 	if pending_actions == 0:
