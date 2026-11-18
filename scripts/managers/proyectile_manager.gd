@@ -7,14 +7,23 @@ signal projectile_finished
 var battle: Battle
 
 func spawn(projectile_scene: PackedScene, parent_entity: Entity) -> Projectile:
-	# VALIDACIÓN: comprueba que la escena y la entidad existen.
+	# Valida la escena y la entidad que origina el proyectil.
 	if projectile_scene == null:
 		return null
 
 	if parent_entity == null:
 		return null
 
-	# VALIDACIÓN: el proyectil necesita la cuadrícula y la casilla de origen.
+	if parent_entity.health == null:
+		return null
+
+	if parent_entity.health.hp <= 0:
+		return null
+
+	if battle != null and battle.battle_over:
+		return null
+
+	# El proyectil necesita una cuadrícula y una casilla de origen.
 	if parent_entity.grid_manager == null:
 		return null
 
@@ -23,12 +32,9 @@ func spawn(projectile_scene: PackedScene, parent_entity: Entity) -> Projectile:
 
 	var projectile: Projectile = projectile_scene.instantiate() as Projectile
 
-	# VALIDACIÓN: comprueba que la escena instancia un Projectile válido.
 	if projectile == null:
 		push_error("ProjectileManager: la escena no contiene un nodo Projectile.")
 		return null
-
-	projectile_started.emit()
 
 	add_child(projectile)
 
@@ -46,9 +52,10 @@ func spawn(projectile_scene: PackedScene, parent_entity: Entity) -> Projectile:
 		spawn_position.x -= parent_entity.grid_manager.TILE_SIZE.x / 2
 
 	spawn_position += projectile.spawn_offset
-
 	projectile.global_position = spawn_position
 
+	# Registra la acción cuando el proyectil ya está preparado.
+	projectile_started.emit()
 	projectile.launch()
 
 	return projectile
