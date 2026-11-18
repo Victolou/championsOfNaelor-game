@@ -16,10 +16,14 @@ func initialize(character: Entity, manager: ProjectileManager) -> void:
 	parent_entity = character
 	projectile_manager = manager
 
-	parent_entity.attack_frame.connect(_on_attack_frame)
+	if parent_entity == null:
+		return
+
+	if not parent_entity.attack_frame.is_connected(_on_attack_frame):
+		parent_entity.attack_frame.connect(_on_attack_frame)
 
 func _process(delta: float) -> void:
-	# MEJORA: mantiene los cooldowns en cero cuando terminan.
+	# Actualiza todos los cooldowns activos.
 	for skill in cooldowns:
 		if cooldowns[skill] > 0.0:
 			cooldowns[skill] = maxf(cooldowns[skill] - delta, 0.0)
@@ -29,7 +33,13 @@ func _process(delta: float) -> void:
 # =========================
 
 func use_basic_attack() -> void:
+	if not _can_perform_action():
+		return
+
 	if basic_projectile == null:
+		return
+
+	if projectile_manager == null:
 		return
 
 	projectile_manager.spawn(
@@ -43,18 +53,16 @@ func use_basic_attack() -> void:
 # =========================
 
 func use_skill(skill: Skill) -> void:
-	# VALIDACIÓN: evita ejecutar habilidades o acceder a datos inexistentes.
+	if not _can_perform_action():
+		return
+
 	if skill == null:
 		return
 
-	# VALIDACIÓN: impide ejecutar una habilidad mientras está en cooldown.
 	if not is_skill_ready(skill):
 		return
 
 	if skill.target_pattern == null:
-		return
-
-	if parent_entity == null:
 		return
 
 	if parent_entity.grid_manager == null:
@@ -63,31 +71,30 @@ func use_skill(skill: Skill) -> void:
 	if parent_entity.current_tile == null:
 		return
 
-	# El cooldown se aplica igual que antes cuando la habilidad está correctamente configurada.
-	cooldowns[skill] = skill.cooldown
-
 	var targets: Array[Tile] = skill.target_pattern.get_tiles(
 		parent_entity.grid_manager,
 		parent_entity
 	)
 
+	# El cooldown solo empieza cuando la habilidad puede ejecutarse.
+	cooldowns[skill] = maxf(skill.cooldown, 0.0)
+
 	for tile: Tile in targets:
-		# VALIDACIÓN: ignora referencias de casilla u ocupantes no válidas.
 		if tile == null:
 			continue
 
 		if tile.occupant == null:
 			continue
 
+		if tile.occupant == parent_entity:
+			continue
+
 		if tile.occupant.health == null:
 			continue
 
-		tile.occupant.health.take_damage(
-			skill.damage
-		)
+		tile.occupant.health.take_damage(skill.damage)
 
 func is_skill_ready(skill: Skill) -> bool:
-	# VALIDACIÓN: una referencia de habilidad inexistente nunca está disponible.
 	if skill == null:
 		return false
 
@@ -96,20 +103,46 @@ func is_skill_ready(skill: Skill) -> bool:
 
 	return cooldowns[skill] <= 0.0
 
+func get_skill_cooldown(skill: Skill) -> float:
+	if skill == null:
+		return 0.0
+
+	if not cooldowns.has(skill):
+		return 0.0
+
+	return maxf(cooldowns[skill], 0.0)
+
+
+# =========================
+# VALIDACIÓN DE ACCIONES
+# =========================
+
+func _can_perform_action() -> bool:
+	if parent_entity == null:
+		return false
+
+	if parent_entity.health == null:
+		return false
+
+	if parent_entity.health.hp <= 0:
+		return false
+
+	if projectile_manager != null and projectile_manager.battle != null:
+		if projectile_manager.battle.battle_over:
+			return false
+
+	return true
+
 func _on_attack_frame() -> void:
 	if is_basic_attack:
-		use_basic_attack()
 		is_basic_attack = false
+		use_basic_attack()
 		return
 
 	if current_skill == null:
 		return
 
-	use_skill(current_skill)
+	var skill_to_use: Skill = current_skill
 	current_skill = null
 
-func get_skill_cooldown(skill: Skill) -> float:
-	if not cooldowns.has(skill):
-		return 0.0
-
-	return maxf(cooldowns[skill], 0.0)
+	use_skill(skill_to_use)
