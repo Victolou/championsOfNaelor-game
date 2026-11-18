@@ -5,25 +5,35 @@ var entity: Entity
 
 @onready var skills: GridContainer = $HBoxContainer/MarginContainer/SkillsConteiner/ButtonsConteiner/Skills
 
-@onready var skill_1: Button = $HBoxContainer/MarginContainer/SkillsConteiner/ButtonsConteiner/Skills/Skill1
-@onready var skill_2: Button = $HBoxContainer/MarginContainer/SkillsConteiner/ButtonsConteiner/Skills/Skill2
-@onready var skill_3: Button = $HBoxContainer/MarginContainer/SkillsConteiner/ButtonsConteiner/Skills/Skill3
-@onready var skill_4: Button = $HBoxContainer/MarginContainer/SkillsConteiner/ButtonsConteiner/Skills/Skill4
+
+func initialize(character: Entity) -> void:
+	entity = character
+	_configure_skill_buttons()
+
 
 func _process(_delta: float) -> void:
 	if entity == null:
 		return
 
-	var buttons: Array[Button] = [
-		skill_1,
-		skill_2,
-		skill_3,
-		skill_4
-	]
+	if entity.combat == null:
+		return
 
-	for i in range(entity.skills.size()):
+	# Recorre los botones existentes, no la cantidad de habilidades del recurso.
+	for i in range(skills.get_child_count()):
+		var button: Button = skills.get_child(i) as Button
+
+		if button == null:
+			continue
+
+		if i >= entity.skills.size():
+			_clear_skill_button(button)
+			continue
+
 		var skill: Skill = entity.skills[i]
-		var button: Button = buttons[i]
+
+		if skill == null:
+			_clear_skill_button(button)
+			continue
 
 		var cooldown: float = entity.combat.get_skill_cooldown(skill)
 
@@ -34,16 +44,35 @@ func _process(_delta: float) -> void:
 			button.text = ""
 			button.disabled = false
 
-func initialize(character: Entity) -> void:
-	entity = character
-	_update_skills()
 
-func _update_skills() -> void:
-	for i in range(entity.skills.size()):
+func _configure_skill_buttons() -> void:
+	if entity == null:
+		return
+
+	for i in range(skills.get_child_count()):
 		var button: Button = skills.get_child(i) as Button
+
+		if button == null:
+			continue
+
+		if i >= entity.skills.size():
+			_clear_skill_button(button)
+			continue
+
 		var skill: Skill = entity.skills[i]
-		
+
+		if skill == null:
+			_clear_skill_button(button)
+			continue
+
 		button.icon = skill.icon
 		button.text = ""
 		button.expand_icon = true
 		button.custom_minimum_size = Vector2(64, 64)
+		button.disabled = not entity.combat.is_skill_ready(skill)
+
+
+func _clear_skill_button(button: Button) -> void:
+	button.icon = null
+	button.text = ""
+	button.disabled = true
