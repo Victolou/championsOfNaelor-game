@@ -19,9 +19,10 @@ func initialize(character: Entity, manager: ProjectileManager) -> void:
 	parent_entity.attack_frame.connect(_on_attack_frame)
 
 func _process(delta: float) -> void:
+	# MEJORA: mantiene los cooldowns en cero cuando terminan.
 	for skill in cooldowns:
-		if cooldowns[skill] > 0:
-			cooldowns[skill] -= delta
+		if cooldowns[skill] > 0.0:
+			cooldowns[skill] = maxf(cooldowns[skill] - delta, 0.0)
 
 # =========================
 # ATAQUE BÁSICO
@@ -82,10 +83,14 @@ func use_skill(skill: Skill) -> void:
 		)
 
 func is_skill_ready(skill: Skill) -> bool:
+	# VALIDACIÓN: una referencia de habilidad inexistente nunca está disponible.
+	if skill == null:
+		return false
+
 	if not cooldowns.has(skill):
 		return true
 
-	return cooldowns[skill] <= 0
+	return cooldowns[skill] <= 0.0
 
 func _on_attack_frame() -> void:
 	if is_basic_attack:
