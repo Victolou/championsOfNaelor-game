@@ -22,8 +22,11 @@ func _process(delta: float) -> void:
 			continue
 
 		var effect_data: Dictionary = active_effects[effect_type]
+		var remaining_before: float = float(effect_data["remaining"])
+		var effect_delta: float = minf(delta, remaining_before)
+
 		effect_data["remaining"] = maxf(
-			float(effect_data["remaining"]) - delta,
+			remaining_before - delta,
 			0.0
 		)
 
@@ -31,7 +34,7 @@ func _process(delta: float) -> void:
 		var tick_damage: int = int(effect_data["tick_damage"])
 
 		if tick_interval > 0.0 and tick_damage > 0:
-			effect_data["tick_timer"] = float(effect_data["tick_timer"]) - delta
+			effect_data["tick_timer"] = float(effect_data["tick_timer"]) - effect_delta
 
 			while float(effect_data["tick_timer"]) <= 0.0:
 				effect_data["tick_timer"] = float(effect_data["tick_timer"]) + tick_interval
