@@ -4,6 +4,8 @@ extends RefCounted
 var parent_entity: Entity
 var cooldowns: Dictionary = {}
 
+signal skill_executed(skill: Skill, targets: Array[Entity])
+
 
 func initialize(entity: Entity) -> void:
 	parent_entity = entity
@@ -62,6 +64,8 @@ func execute_skill(skill: Skill) -> void:
 				continue
 
 			effect.apply(parent_entity, target, skill)
+
+	skill_executed.emit(skill, targets)
 
 
 func is_skill_ready(skill: Skill) -> bool:
