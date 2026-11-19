@@ -6,13 +6,18 @@ signal shield_expired
 
 var current_shield: int = 0
 var remaining_duration: float = 0.0
+var is_permanent: bool = false
 
 
 func _process(delta: float) -> void:
-	if current_shield <= 0:
+	if delta <= 0.0 or current_shield <= 0:
+		return
+
+	if is_permanent:
 		return
 
 	if remaining_duration <= 0.0:
+		clear_shield()
 		return
 
 	remaining_duration = maxf(remaining_duration - delta, 0.0)
@@ -27,8 +32,12 @@ func apply_shield(amount: int, duration: float = 0.0) -> void:
 
 	current_shield += amount
 
-	# Una duración de cero significa que el escudo no expira automáticamente.
-	if duration > 0.0:
+	# Una duración de cero o negativa crea un escudo permanente.
+	# Un escudo permanente no debe desaparecer al añadir otro escudo temporal.
+	if duration <= 0.0:
+		is_permanent = true
+		remaining_duration = 0.0
+	elif not is_permanent:
 		remaining_duration = maxf(remaining_duration, duration)
 
 	shield_changed.emit(current_shield)
@@ -45,6 +54,7 @@ func absorb_damage(incoming_damage: int) -> int:
 
 	if current_shield <= 0:
 		remaining_duration = 0.0
+		is_permanent = false
 
 	return absorbed_amount
 
@@ -52,9 +62,11 @@ func absorb_damage(incoming_damage: int) -> int:
 func clear_shield() -> void:
 	if current_shield <= 0:
 		remaining_duration = 0.0
+		is_permanent = false
 		return
 
 	current_shield = 0
 	remaining_duration = 0.0
+	is_permanent = false
 	shield_changed.emit(current_shield)
 	shield_expired.emit()
