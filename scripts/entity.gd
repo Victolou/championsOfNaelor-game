@@ -18,6 +18,7 @@ var targeting_component: TargetingComponent
 var status_effect_component: StatusEffectComponent
 var buff_debuff_component: BuffDebuffComponent
 var shield_component: ShieldComponent
+var combat_event_component: CombatEventComponent
 
 
 func _ready() -> void:
@@ -44,6 +45,10 @@ func _ready() -> void:
 	shield_component.name = "ShieldComponent"
 	add_child(shield_component)
 
+	combat_event_component = CombatEventComponent.new()
+	combat_event_component.name = "CombatEventComponent"
+	add_child(combat_event_component)
+
 
 func initialize(
 	battle_grid: GridManager,
@@ -59,6 +64,8 @@ func initialize(
 		health.initialize(stats)
 
 	combat.initialize(self, projectile_manager)
+
+	combat_event_component.initialize(self)
 
 
 func receive_damage(
