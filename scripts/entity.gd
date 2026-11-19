@@ -138,7 +138,7 @@ func receive_healing(
 	if health == null:
 		return 0
 
-	return health.heal(amount)
+	return health.heal(amount, source, skill)
 
 
 func get_modified_stat(stat: BuffDebuff.Stat, base_value: float) -> float:

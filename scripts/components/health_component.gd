@@ -3,7 +3,7 @@ extends Node
 
 signal died
 signal health_changed(value: int)
-signal healing_received(amount: int)
+signal healing_received(amount: int, source: Entity, skill: Skill)
 
 @export var hp: int = 100
 
@@ -37,7 +37,7 @@ func take_damage(value: int) -> void:
 		died.emit()
 
 
-func heal(value: int) -> int:
+func heal(value: int, source: Entity = null, skill: Skill = null) -> int:
 	if hp <= 0 or value <= 0:
 		return 0
 
@@ -48,6 +48,6 @@ func heal(value: int) -> int:
 
 	if healed_amount > 0:
 		health_changed.emit(hp)
-		healing_received.emit(healed_amount)
+		healing_received.emit(healed_amount, source, skill)
 
 	return healed_amount

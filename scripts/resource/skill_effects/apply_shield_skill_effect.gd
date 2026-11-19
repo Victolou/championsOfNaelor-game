@@ -17,5 +17,7 @@ func apply(user: Entity, target: Entity, skill: Skill) -> void:
 
 	target.shield_component.apply_shield(
 		shield_amount,
-		duration
+		duration,
+		user,
+		skill
 	)

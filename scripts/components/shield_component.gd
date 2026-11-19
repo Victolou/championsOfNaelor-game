@@ -2,6 +2,7 @@ class_name ShieldComponent
 extends Node
 
 signal shield_changed(current_shield: int)
+signal shield_applied(amount: int, source: Entity, skill: Skill)
 signal shield_expired
 
 var current_shield: int = 0
@@ -26,7 +27,12 @@ func _process(delta: float) -> void:
 		clear_shield()
 
 
-func apply_shield(amount: int, duration: float = 0.0) -> void:
+func apply_shield(
+	amount: int,
+	duration: float = 0.0,
+	source: Entity = null,
+	skill: Skill = null
+) -> void:
 	if amount <= 0:
 		return
 
@@ -41,6 +47,7 @@ func apply_shield(amount: int, duration: float = 0.0) -> void:
 		remaining_duration = maxf(remaining_duration, duration)
 
 	shield_changed.emit(current_shield)
+	shield_applied.emit(amount, source, skill)
 
 
 func absorb_damage(incoming_damage: int) -> int:

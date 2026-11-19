@@ -10,6 +10,7 @@ enum EventType {
 	HEALTH_CHANGED,
 	ENTITY_DIED,
 	SHIELD_CHANGED,
+	SHIELD_APPLIED,
 	SHIELD_EXPIRED,
 	STATUS_APPLIED,
 	STATUS_EXPIRED,
@@ -36,6 +37,7 @@ func initialize(entity: Entity) -> void:
 
 	if parent_entity.shield_component != null:
 		parent_entity.shield_component.shield_changed.connect(_on_shield_changed)
+		parent_entity.shield_component.shield_applied.connect(_on_shield_applied)
 		parent_entity.shield_component.shield_expired.connect(_on_shield_expired)
 
 	if parent_entity.status_effect_component != null:
@@ -74,8 +76,12 @@ func _on_damage_absorbed(info: DamageInfo, amount: int) -> void:
 	})
 
 
-func _on_healing_received(amount: int) -> void:
-	_emit_event(EventType.HEALING_RECEIVED, {"amount": amount})
+func _on_healing_received(amount: int, source: Entity, skill: Skill) -> void:
+	_emit_event(EventType.HEALING_RECEIVED, {
+		"amount": amount,
+		"source": source,
+		"skill": skill
+	})
 
 
 func _on_health_changed(value: int) -> void:
@@ -91,6 +97,14 @@ func _on_entity_died() -> void:
 
 func _on_shield_changed(value: int) -> void:
 	_emit_event(EventType.SHIELD_CHANGED, {"shield": value})
+
+
+func _on_shield_applied(amount: int, source: Entity, skill: Skill) -> void:
+	_emit_event(EventType.SHIELD_APPLIED, {
+		"amount": amount,
+		"source": source,
+		"skill": skill
+	})
 
 
 func _on_shield_expired() -> void:
