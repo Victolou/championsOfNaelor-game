@@ -17,6 +17,7 @@ var damage_component: DamageComponent
 var targeting_component: TargetingComponent
 var status_effect_component: StatusEffectComponent
 var buff_debuff_component: BuffDebuffComponent
+var shield_component: ShieldComponent
 
 
 func _ready() -> void:
@@ -38,6 +39,10 @@ func _ready() -> void:
 	buff_debuff_component = BuffDebuffComponent.new()
 	buff_debuff_component.name = "BuffDebuffComponent"
 	add_child(buff_debuff_component)
+
+	shield_component = ShieldComponent.new()
+	shield_component.name = "ShieldComponent"
+	add_child(shield_component)
 
 
 func initialize(
@@ -73,6 +78,17 @@ func receive_damage(
 	)
 
 	return damage_component.apply_damage(damage_info)
+
+
+func receive_healing(
+	amount: int,
+	source: Entity = null,
+	skill: Skill = null
+) -> int:
+	if health == null:
+		return 0
+
+	return health.heal(amount)
 
 
 func get_modified_stat(stat: BuffDebuff.Stat, base_value: float) -> float:
@@ -117,6 +133,9 @@ func _on_died() -> void:
 
 	if buff_debuff_component != null:
 		buff_debuff_component.clear_modifiers()
+
+	if shield_component != null:
+		shield_component.clear_shield()
 
 	var dead_state: DeadState = $StateMachine/DeadState
 	$StateMachine.change_state(dead_state)
