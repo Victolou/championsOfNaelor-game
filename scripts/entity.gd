@@ -171,3 +171,15 @@ func _on_died() -> void:
 
 	var dead_state: DeadState = $StateMachine/DeadState
 	$StateMachine.change_state(dead_state)
+
+
+# Muestra los errores del recurso directamente en el panel de advertencias del editor.
+func get_configuration_warnings() -> PackedStringArray:
+	var warnings: PackedStringArray = []
+
+	if champion_data == null:
+		return warnings
+
+	warnings.append_array(champion_data.get_validation_errors())
+
+	return warnings
