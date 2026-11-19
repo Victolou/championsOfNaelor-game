@@ -2,30 +2,52 @@ class_name HealthComponent
 extends Node
 
 signal died
-
 signal health_changed(value: int)
+signal healing_received(amount: int)
 
 @export var hp: int = 100
 
+var max_hp: int = 100
+
+
+func _ready() -> void:
+	max_hp = maxi(hp, 1)
+
+
 func initialize(stats: CharacterStats) -> void:
-	# VALIDACIÓN: no intenta leer estadísticas inexistentes.
 	if stats == null:
+		max_hp = maxi(hp, 1)
 		return
 
-	hp = stats.max_hp
+	max_hp = maxi(stats.max_hp, 1)
+	hp = max_hp
+
 
 func take_damage(value: int) -> void:
 	if hp <= 0:
 		return
 
-	# VALIDACIÓN: el daño negativo no debe convertirse en curación accidental.
-	if value < 0:
+	if value <= 0:
 		return
 
-	# MEJORA: evita que la vida baje de cero al recibir daño excesivo.
 	hp = maxi(hp - value, 0)
-
 	health_changed.emit(hp)
 
 	if hp <= 0:
 		died.emit()
+
+
+func heal(value: int) -> int:
+	if hp <= 0 or value <= 0:
+		return 0
+
+	var previous_hp: int = hp
+	hp = mini(hp + value, max_hp)
+
+	var healed_amount: int = hp - previous_hp
+
+	if healed_amount > 0:
+		health_changed.emit(hp)
+		healing_received.emit(healed_amount)
+
+	return healed_amount

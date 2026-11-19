@@ -124,8 +124,8 @@ func _get_damage_amount() -> int:
 	if damage_override >= 0:
 		return damage_override
 
-	if parent_entity != null and parent_entity.stats != null:
-		return parent_entity.stats.attack
+	if parent_entity != null:
+		return parent_entity.get_attack_damage()
 
 	# Mantiene el daño predeterminado que tenía el proyectil.
 	return 10
