@@ -8,14 +8,17 @@ signal action_finished
 var parent_entity: Entity
 var current_skill: Skill
 var projectile_manager: ProjectileManager
+var skill_manager: SkillManager
 
 var is_basic_attack: bool = false
-var cooldowns: Dictionary = {}
 
 
 func initialize(character: Entity, manager: ProjectileManager) -> void:
 	parent_entity = character
 	projectile_manager = manager
+
+	skill_manager = SkillManager.new()
+	skill_manager.initialize(parent_entity)
 
 	if parent_entity == null:
 		return
@@ -25,10 +28,8 @@ func initialize(character: Entity, manager: ProjectileManager) -> void:
 
 
 func _process(delta: float) -> void:
-	# Actualiza todos los cooldowns activos.
-	for skill in cooldowns:
-		if cooldowns[skill] > 0.0:
-			cooldowns[skill] = maxf(cooldowns[skill] - delta, 0.0)
+	if skill_manager != null:
+		skill_manager.update_cooldowns(delta)
 
 
 # =========================
@@ -59,67 +60,24 @@ func use_skill(skill: Skill) -> void:
 	if not _can_perform_action():
 		return
 
-	if skill == null:
+	if skill_manager == null:
 		return
 
-	if not is_skill_ready(skill):
-		return
-
-	if skill.target_pattern == null:
-		return
-
-	if parent_entity.targeting_component == null:
-		return
-
-	var targets: Array[Entity] = parent_entity.targeting_component.get_targets(
-		skill.target_pattern,
-		skill.target_relation,
-		skill.can_target_self
-	)
-
-	# El cooldown solo empieza cuando la habilidad puede ejecutarse.
-	cooldowns[skill] = maxf(skill.cooldown, 0.0)
-
-	for target: Entity in targets:
-		if target == null:
-			continue
-
-		# Las habilidades antiguas siguen aplicando su daño directamente.
-		# Si hay efectos configurados, cada efecto decide qué hacer con el objetivo.
-		if skill.effects.is_empty():
-			target.receive_damage(
-				skill.damage,
-				parent_entity,
-				skill,
-				skill.damage_type
-			)
-			continue
-
-		for effect: SkillEffect in skill.effects:
-			if effect == null:
-				continue
-
-			effect.apply(parent_entity, target, skill)
+	skill_manager.execute_skill(skill)
 
 
 func is_skill_ready(skill: Skill) -> bool:
-	if skill == null:
+	if skill_manager == null:
 		return false
 
-	if not cooldowns.has(skill):
-		return true
-
-	return cooldowns[skill] <= 0.0
+	return skill_manager.is_skill_ready(skill)
 
 
 func get_skill_cooldown(skill: Skill) -> float:
-	if skill == null:
+	if skill_manager == null:
 		return 0.0
 
-	if not cooldowns.has(skill):
-		return 0.0
-
-	return maxf(cooldowns[skill], 0.0)
+	return skill_manager.get_skill_cooldown(skill)
 
 
 # =========================
