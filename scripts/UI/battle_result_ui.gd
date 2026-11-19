@@ -4,10 +4,14 @@ extends Control
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	mouse_filter = Control.MOUSE_FILTER_STOP
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hide()
 
 
 func show_result(result: String, description: String) -> void:
+	show()
+	mouse_filter = Control.MOUSE_FILTER_STOP
+
 	for child in get_children():
 		child.queue_free()
 
