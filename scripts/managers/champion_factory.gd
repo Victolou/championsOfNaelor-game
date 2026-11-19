@@ -46,3 +46,33 @@ static func create_champion(
 	champion.initialize(grid_manager, red_team, projectile_manager)
 
 	return champion
+
+
+# Resuelve el identificador en el registro y crea el campeón correspondiente.
+static func create_champion_from_registry(
+	champion_scene: PackedScene,
+	registry: ChampionRegistry,
+	champion_id: String,
+	parent: Node,
+	grid_manager: GridManager,
+	red_team: bool,
+	projectile_manager: ProjectileManager
+) -> Entity:
+	if registry == null:
+		push_error("ChampionFactory: falta asignar ChampionRegistry.")
+		return null
+
+	var champion_data: ChampionData = registry.get_champion_by_id(champion_id)
+
+	if champion_data == null:
+		push_error("ChampionFactory: no existe el campeón con ID '%s'." % champion_id)
+		return null
+
+	return create_champion(
+		champion_scene,
+		champion_data,
+		parent,
+		grid_manager,
+		red_team,
+		projectile_manager
+	)

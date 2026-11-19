@@ -1,6 +1,7 @@
 class_name ChampionData
 extends Resource
 
+@export var champion_id: String
 @export var display_name: String
 @export_multiline var description: String
 @export var portrait: Texture2D
@@ -14,6 +15,9 @@ extends Resource
 # Devuelve los problemas de configuración del campeón sin modificar el recurso.
 func get_validation_errors() -> PackedStringArray:
 	var errors: PackedStringArray = []
+
+	if champion_id.strip_edges().is_empty():
+		errors.append("ChampionData: champion_id no puede estar vacío.")
 
 	if display_name.strip_edges().is_empty():
 		errors.append("ChampionData: display_name no puede estar vacío.")
