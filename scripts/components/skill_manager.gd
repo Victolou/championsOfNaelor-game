@@ -35,6 +35,14 @@ func execute_skill(skill: Skill) -> void:
 	if parent_entity.targeting_component == null:
 		return
 
+	# La Ultimate consume toda la barra al activarse, incluso si no alcanza al rival.
+	if skill.is_ultimate:
+		if parent_entity.ultimate_component == null:
+			return
+
+		if not parent_entity.ultimate_component.consume():
+			return
+
 	var targets: Array[Entity] = parent_entity.targeting_component.get_targets(
 		skill.target_pattern,
 		skill.target_relation,
@@ -45,9 +53,17 @@ func execute_skill(skill: Skill) -> void:
 	# aunque el patrón no encuentre objetivos ocupados.
 	cooldowns[skill] = maxf(skill.cooldown, 0.0)
 
+	var hit_enemy: bool = false
+
 	for target: Entity in targets:
 		if target == null:
 			continue
+
+		if target.health == null or target.health.hp <= 0:
+			continue
+
+		if target != parent_entity and target.is_red != parent_entity.is_red:
+			hit_enemy = true
 
 		# Compatibilidad con habilidades antiguas que no usan SkillEffect.
 		if skill.effects.is_empty():
@@ -65,12 +81,25 @@ func execute_skill(skill: Skill) -> void:
 
 			effect.apply(parent_entity, target, skill)
 
+	# Una ejecución exitosa de una habilidad ofensiva carga energía una sola vez.
+	# La Ultimate no genera carga para sí misma.
+	if hit_enemy and not skill.is_ultimate:
+		if parent_entity.ultimate_component != null:
+			parent_entity.ultimate_component.gain_from_skill_hit()
+
 	skill_executed.emit(skill, targets)
 
 
 func is_skill_ready(skill: Skill) -> bool:
 	if skill == null:
 		return false
+
+	if skill.is_ultimate:
+		if parent_entity == null or parent_entity.ultimate_component == null:
+			return false
+
+		if not parent_entity.ultimate_component.is_ready():
+			return false
 
 	if not cooldowns.has(skill):
 		return true

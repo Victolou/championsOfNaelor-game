@@ -5,6 +5,8 @@ extends Resource
 @export_multiline var description: String
 @export var portrait: Texture2D
 @export var stats: CharacterStats
+@export var basic_attack_name: String = "Basic Attack"
+@export var basic_attack_projectile: PackedScene
 @export var skills: Array[Skill] = []
 @export var passive_ability: PassiveAbility
 
@@ -28,8 +30,16 @@ func get_validation_errors() -> PackedStringArray:
 		if stats.attack < 0:
 			errors.append("ChampionData: attack no puede ser negativo.")
 
+	if basic_attack_name.strip_edges().is_empty():
+		errors.append("ChampionData: basic_attack_name no puede estar vacío.")
+
+	if basic_attack_projectile == null:
+		errors.append("ChampionData: falta asignar el proyectil del ataque básico.")
+
 	if skills.size() != 4:
-		errors.append("ChampionData: se esperan exactamente cuatro habilidades.")
+		errors.append("ChampionData: se esperan exactamente cuatro habilidades (Q, W, E y R).")
+
+	var assigned_skills: Array[Skill] = []
 
 	for index in range(skills.size()):
 		var skill: Skill = skills[index]
@@ -37,6 +47,11 @@ func get_validation_errors() -> PackedStringArray:
 		if skill == null:
 			errors.append("ChampionData: falta asignar la habilidad del espacio %d." % (index + 1))
 			continue
+
+		if assigned_skills.has(skill):
+			errors.append("ChampionData: cada espacio debe tener una habilidad única.")
+		else:
+			assigned_skills.append(skill)
 
 		if skill.skill_name.strip_edges().is_empty():
 			errors.append("ChampionData: la habilidad del espacio %d no tiene nombre." % (index + 1))
@@ -46,6 +61,11 @@ func get_validation_errors() -> PackedStringArray:
 
 		if skill.cooldown < 0.0:
 			errors.append("ChampionData: el cooldown de '%s' no puede ser negativo." % skill.skill_name)
+
+		if index == 3 and not skill.is_ultimate:
+			errors.append("ChampionData: la cuarta habilidad (R) debe estar marcada como Ultimate.")
+		elif index < 3 and skill.is_ultimate:
+			errors.append("ChampionData: solo la cuarta habilidad (R) puede ser Ultimate.")
 
 	if passive_ability == null:
 		errors.append("ChampionData: falta asignar la habilidad pasiva.")

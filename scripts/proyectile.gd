@@ -116,6 +116,11 @@ func _try_hit_target(target: Entity) -> void:
 		damage_type
 	)
 
+	# Acertar un ataque básico carga la Ultimate una sola vez.
+	# El impacto cuenta aunque el daño sea absorbido por un escudo.
+	if parent_entity.ultimate_component != null:
+		parent_entity.ultimate_component.gain_from_basic_attack()
+
 	if applied_damage > 0:
 		hit_target.emit(target, applied_damage)
 

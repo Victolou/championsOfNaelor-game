@@ -29,3 +29,6 @@ enum TargetRelation {
 @export var animation: StringName
 
 @export var attack_frame: int = 3
+
+# Solo debe activarse en la habilidad R de ChampionData.
+@export var is_ultimate: bool = false

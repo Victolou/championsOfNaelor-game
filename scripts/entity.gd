@@ -12,6 +12,7 @@ extends CharacterBody2D
 @onready var combat: CombatComponent = $CombatComponent
 @onready var health: HealthComponent = $HealthComponent
 
+var champion_name: String = ""
 var current_tile: Tile
 var moving: bool = false
 var grid_manager: GridManager
@@ -24,6 +25,7 @@ var buff_debuff_component: BuffDebuffComponent
 var shield_component: ShieldComponent
 var combat_event_component: CombatEventComponent
 var passive_component: PassiveComponent
+var ultimate_component: UltimateComponent
 
 
 func _ready() -> void:
@@ -33,6 +35,11 @@ func _ready() -> void:
 	damage_component.name = "DamageComponent"
 	add_child(damage_component)
 	damage_component.initialize(self)
+
+	ultimate_component = UltimateComponent.new()
+	ultimate_component.name = "UltimateComponent"
+	add_child(ultimate_component)
+	ultimate_component.initialize(self)
 
 	targeting_component = TargetingComponent.new()
 	targeting_component.initialize(self)
@@ -69,7 +76,7 @@ func initialize(
 
 	_apply_champion_data()
 
-	# Inicializa la vida con las estadísticas del personaje.
+	# Inicializa la vida con las estadísticas del campeón.
 	# Si no hay estadísticas, conserva el HP predeterminado del componente.
 	if stats != null:
 		health.initialize(stats)
@@ -88,9 +95,20 @@ func _apply_champion_data() -> void:
 	if champion_data == null:
 		return
 
+	champion_name = champion_data.display_name
 	stats = champion_data.stats
 	skills = champion_data.skills
 	passive_ability = champion_data.passive_ability
+
+	if champion_data.basic_attack_projectile != null:
+		combat.basic_projectile = champion_data.basic_attack_projectile
+
+
+func get_champion_name() -> String:
+	if champion_data != null:
+		return champion_data.display_name
+
+	return champion_name
 
 
 func receive_damage(
@@ -171,4 +189,3 @@ func _on_died() -> void:
 
 	var dead_state: DeadState = $StateMachine/DeadState
 	$StateMachine.change_state(dead_state)
-
