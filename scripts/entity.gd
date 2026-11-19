@@ -15,6 +15,7 @@ var is_red: bool = false
 
 var damage_component: DamageComponent
 var targeting_component: TargetingComponent
+var status_effect_component: StatusEffectComponent
 
 
 func _ready() -> void:
@@ -27,6 +28,11 @@ func _ready() -> void:
 
 	targeting_component = TargetingComponent.new()
 	targeting_component.initialize(self)
+
+	status_effect_component = StatusEffectComponent.new()
+	status_effect_component.name = "StatusEffectComponent"
+	add_child(status_effect_component)
+	status_effect_component.initialize(self)
 
 
 func initialize(
@@ -64,6 +70,20 @@ func receive_damage(
 	return damage_component.apply_damage(damage_info)
 
 
+func can_act() -> bool:
+	if status_effect_component == null:
+		return true
+
+	return status_effect_component.can_act()
+
+
+func can_use_skills() -> bool:
+	if status_effect_component == null:
+		return true
+
+	return status_effect_component.can_use_skills()
+
+
 func get_direction() -> Vector2i:
 	if is_red:
 		return Vector2i.RIGHT
@@ -72,5 +92,8 @@ func get_direction() -> Vector2i:
 
 
 func _on_died() -> void:
+	if status_effect_component != null:
+		status_effect_component.clear_effects()
+
 	var dead_state: DeadState = $StateMachine/DeadState
 	$StateMachine.change_state(dead_state)

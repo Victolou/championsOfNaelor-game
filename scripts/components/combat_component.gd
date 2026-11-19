@@ -60,6 +60,9 @@ func use_skill(skill: Skill) -> void:
 	if not _can_perform_action():
 		return
 
+	if not parent_entity.can_use_skills():
+		return
+
 	if skill_manager == null:
 		return
 
@@ -92,6 +95,9 @@ func _can_perform_action() -> bool:
 		return false
 
 	if parent_entity.health.hp <= 0:
+		return false
+
+	if not parent_entity.can_act():
 		return false
 
 	if projectile_manager != null and projectile_manager.battle != null:

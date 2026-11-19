@@ -14,9 +14,12 @@ func initialize(character: Entity, battle_grid: GridManager) -> void:
 		move_duration = parent_entity.stats.move_speed
 
 # Intenta realizar el movimiento en la dirección del input.
-# Si el Grid lo autoriza, inicia el desplazamiento AL Tiled vecino.
+# Si el Grid lo autoriza, inicia el desplazamiento al tile vecino.
 func try_move(direction: Vector2i) -> void:
 	if parent_entity.get_parent().can_act() == false:
+		return
+
+	if not parent_entity.can_act():
 		return
 
 	if parent_entity.moving:
@@ -25,31 +28,30 @@ func try_move(direction: Vector2i) -> void:
 	var next: Tile = grid.get_neighbor(
 		parent_entity.current_tile,
 		direction
-		)
+	)
 
 	if next == null:
 		return
 
 	if grid.move_entity(parent_entity, next):
-		#if direction == Vector2i.LEFT:
-			#parent_entity.facing = Vector2i.LEFT
-
-		#elif direction == Vector2i.RIGHT:
-			#parent_entity.facing = Vector2i.RIGHT
-
 		move_animation(next)
 
-# Realiza la animación de desplazamiento hacia el Tiled del destino.
+# Realiza la animación de desplazamiento hacia el tile del destino.
 func move_animation(tile: Tile) -> void:
 	parent_entity.moving = true
 
+	var movement_multiplier: float = 1.0
+	if parent_entity.status_effect_component != null:
+		movement_multiplier = parent_entity.status_effect_component.get_movement_multiplier()
+
+	var adjusted_duration: float = move_duration / movement_multiplier
 	var tween = parent_entity.create_tween()
 
 	tween.tween_property(
 		parent_entity,
 		"global_position",
 		tile.global_position,
-		move_duration
+		adjusted_duration
 	)
 
 	await tween.finished

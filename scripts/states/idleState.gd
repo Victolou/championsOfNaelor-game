@@ -18,15 +18,19 @@ func handle_input(_event: InputEvent) -> void:
 	if entity.get_parent().can_act() == false:
 		return
 
+	if not entity.can_act():
+		return
+
 	if Input.is_action_just_pressed("basic_attack"):
 		_start_basic_attack()
 		return
 
-	# Todas las habilidades utilizan el mismo flujo de activación.
-	for skill_index in range(SKILL_ACTIONS.size()):
-		if Input.is_action_just_pressed(SKILL_ACTIONS[skill_index]):
-			_try_start_skill(skill_index)
-			return
+	# El silencio bloquea habilidades, pero permite ataques básicos y movimiento.
+	if entity.can_use_skills():
+		for skill_index in range(SKILL_ACTIONS.size()):
+			if Input.is_action_just_pressed(SKILL_ACTIONS[skill_index]):
+				_try_start_skill(skill_index)
+				return
 
 	# Movimiento.
 	if Input.is_action_just_pressed("ui_right"):
