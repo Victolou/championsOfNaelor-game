@@ -1,8 +1,12 @@
 class_name Entity
 extends CharacterBody2D
 
+@export var champion_data: ChampionData
+
+# Campos heredados para mantener compatibilidad con entidades ya configuradas.
 @export var skills: Array[Skill]
 @export var stats: CharacterStats
+@export var passive_ability: PassiveAbility
 
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 @onready var combat: CombatComponent = $CombatComponent
@@ -19,6 +23,7 @@ var status_effect_component: StatusEffectComponent
 var buff_debuff_component: BuffDebuffComponent
 var shield_component: ShieldComponent
 var combat_event_component: CombatEventComponent
+var passive_component: PassiveComponent
 
 
 func _ready() -> void:
@@ -49,6 +54,10 @@ func _ready() -> void:
 	combat_event_component.name = "CombatEventComponent"
 	add_child(combat_event_component)
 
+	passive_component = PassiveComponent.new()
+	passive_component.name = "PassiveComponent"
+	add_child(passive_component)
+
 
 func initialize(
 	battle_grid: GridManager,
@@ -58,6 +67,8 @@ func initialize(
 	grid_manager = battle_grid
 	is_red = red_team
 
+	_apply_champion_data()
+
 	# Inicializa la vida con las estadísticas del personaje.
 	# Si no hay estadísticas, conserva el HP predeterminado del componente.
 	if stats != null:
@@ -66,6 +77,20 @@ func initialize(
 	combat.initialize(self, projectile_manager)
 
 	combat_event_component.initialize(self)
+
+	if passive_ability != null:
+		passive_component.initialize(self, passive_ability)
+
+
+# Copia los datos del recurso al Entity antes de inicializar sus componentes.
+# Si no hay ChampionData asignado, conserva los campos exportados antiguos.
+func _apply_champion_data() -> void:
+	if champion_data == null:
+		return
+
+	stats = champion_data.stats
+	skills = champion_data.skills
+	passive_ability = champion_data.passive_ability
 
 
 func receive_damage(
@@ -146,3 +171,4 @@ func _on_died() -> void:
 
 	var dead_state: DeadState = $StateMachine/DeadState
 	$StateMachine.change_state(dead_state)
+
