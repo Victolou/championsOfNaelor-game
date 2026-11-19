@@ -14,4 +14,8 @@ func apply(user: Entity, target: Entity, skill: Skill) -> void:
 	if target.buff_debuff_component == null:
 		return
 
-	target.buff_debuff_component.apply_modifier(modifier)
+	target.buff_debuff_component.apply_modifier(
+		modifier,
+		user,
+		skill
+	)

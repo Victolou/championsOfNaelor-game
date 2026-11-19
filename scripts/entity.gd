@@ -178,14 +178,24 @@ func get_direction() -> Vector2i:
 
 
 func _on_died() -> void:
+	# Detiene y limpia los efectos temporales para evitar procesos tras la muerte.
 	if status_effect_component != null:
 		status_effect_component.clear_effects()
+		status_effect_component.set_process(false)
 
 	if buff_debuff_component != null:
 		buff_debuff_component.clear_modifiers()
+		buff_debuff_component.set_process(false)
 
 	if shield_component != null:
 		shield_component.clear_shield()
+		shield_component.set_process(false)
+
+	if combat != null:
+		combat.set_process(false)
+
+	if passive_component != null:
+		passive_component.set_process(false)
 
 	var dead_state: DeadState = $StateMachine/DeadState
 	$StateMachine.change_state(dead_state)

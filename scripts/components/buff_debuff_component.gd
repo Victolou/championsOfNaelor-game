@@ -1,8 +1,17 @@
 class_name BuffDebuffComponent
 extends Node
 
-signal modifier_applied(modifier: BuffDebuff, stacks: int)
-signal modifier_expired(modifier: BuffDebuff)
+signal modifier_applied(
+	modifier: BuffDebuff,
+	stacks: int,
+	source: Entity,
+	skill: Skill
+)
+signal modifier_expired(
+	modifier: BuffDebuff,
+	source: Entity,
+	skill: Skill
+)
 
 var active_modifiers: Dictionary = {}
 
@@ -23,10 +32,14 @@ func _process(delta: float) -> void:
 
 		if float(modifier_data["remaining"]) <= 0.0:
 			active_modifiers.erase(modifier)
-			modifier_expired.emit(modifier)
+			_emit_modifier_expired(modifier, modifier_data)
 
 
-func apply_modifier(modifier: BuffDebuff) -> void:
+func apply_modifier(
+	modifier: BuffDebuff,
+	source: Entity = null,
+	skill: Skill = null
+) -> void:
 	if modifier == null or modifier.duration <= 0.0:
 		return
 
@@ -37,15 +50,22 @@ func apply_modifier(modifier: BuffDebuff) -> void:
 			int(current_data["stacks"]) + 1,
 			maxi(modifier.max_stacks, 1)
 		)
+		current_data["source"] = source
+		current_data["skill"] = skill
 	else:
 		active_modifiers[modifier] = {
 			"remaining": modifier.duration,
-			"stacks": 1
+			"stacks": 1,
+			"source": source,
+			"skill": skill
 		}
 
+	var modifier_data: Dictionary = active_modifiers[modifier]
 	modifier_applied.emit(
 		modifier,
-		int(active_modifiers[modifier]["stacks"])
+		int(modifier_data["stacks"]),
+		modifier_data["source"],
+		modifier_data["skill"]
 	)
 
 
@@ -53,16 +73,18 @@ func remove_modifier(modifier: BuffDebuff) -> void:
 	if not active_modifiers.has(modifier):
 		return
 
+	var modifier_data: Dictionary = active_modifiers[modifier]
 	active_modifiers.erase(modifier)
-	modifier_expired.emit(modifier)
+	_emit_modifier_expired(modifier, modifier_data)
 
 
 func clear_modifiers() -> void:
 	var modifiers: Array = active_modifiers.keys()
+	var expired_data: Dictionary = active_modifiers.duplicate(true)
 	active_modifiers.clear()
 
 	for modifier in modifiers:
-		modifier_expired.emit(modifier)
+		_emit_modifier_expired(modifier, expired_data[modifier])
 
 
 func get_modified_stat(stat: BuffDebuff.Stat, base_value: float) -> float:
@@ -81,3 +103,12 @@ func get_modified_stat(stat: BuffDebuff.Stat, base_value: float) -> float:
 			multiplier_total *= pow(modifier.value, stacks)
 
 	return (base_value + additive_total) * multiplier_total
+
+
+func _emit_modifier_expired(
+	modifier: BuffDebuff,
+	modifier_data: Dictionary
+) -> void:
+	var source: Entity = modifier_data.get("source")
+	var skill: Skill = modifier_data.get("skill")
+	modifier_expired.emit(modifier, source, skill)

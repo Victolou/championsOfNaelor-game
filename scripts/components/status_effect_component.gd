@@ -1,9 +1,19 @@
 class_name StatusEffectComponent
 extends Node
 
-signal status_applied(effect_type: int, duration: float, source: Entity)
-signal status_expired(effect_type: int)
-signal status_tick(effect_type: int, applied_damage: int)
+signal status_applied(
+	effect_type: int,
+	duration: float,
+	source: Entity,
+	skill: Skill
+)
+signal status_expired(effect_type: int, source: Entity, skill: Skill)
+signal status_tick(
+	effect_type: int,
+	applied_damage: int,
+	source: Entity,
+	skill: Skill
+)
 
 var parent_entity: Entity
 var active_effects: Dictionary = {}
@@ -46,7 +56,7 @@ func _process(delta: float) -> void:
 		if active_effects.has(effect_type):
 			if float(effect_data["remaining"]) <= 0.0:
 				active_effects.erase(effect_type)
-				status_expired.emit(effect_type)
+				_emit_status_expired(effect_type, effect_data)
 
 
 func apply_effect(
@@ -93,24 +103,25 @@ func apply_effect(
 			"skill": skill
 		}
 
-	status_applied.emit(effect_type, effect.duration, source)
+	status_applied.emit(effect_type, effect.duration, source, skill)
 
 
 func remove_effect(effect_type: int) -> void:
 	if not active_effects.has(effect_type):
 		return
 
+	var effect_data: Dictionary = active_effects[effect_type]
 	active_effects.erase(effect_type)
-	status_expired.emit(effect_type)
+	_emit_status_expired(effect_type, effect_data)
 
 
 func clear_effects() -> void:
 	var effect_types: Array = active_effects.keys()
-
+	var expired_data: Dictionary = active_effects.duplicate(true)
 	active_effects.clear()
 
 	for effect_type in effect_types:
-		status_expired.emit(effect_type)
+		_emit_status_expired(effect_type, expired_data[effect_type])
 
 
 func has_effect(effect_type: int) -> bool:
@@ -164,4 +175,10 @@ func _apply_periodic_damage(effect_type: int, effect_data: Dictionary) -> void:
 		DamageInfo.DamageType.MAGICAL
 	)
 
-	status_tick.emit(effect_type, applied_damage)
+	status_tick.emit(effect_type, applied_damage, source, skill)
+
+
+func _emit_status_expired(effect_type: int, effect_data: Dictionary) -> void:
+	var source: Entity = effect_data.get("source")
+	var skill: Skill = effect_data.get("skill")
+	status_expired.emit(effect_type, source, skill)

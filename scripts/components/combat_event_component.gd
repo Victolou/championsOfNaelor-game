@@ -107,42 +107,83 @@ func _on_shield_applied(amount: int, source: Entity, skill: Skill) -> void:
 	})
 
 
-func _on_shield_expired() -> void:
-	_emit_event(EventType.SHIELD_EXPIRED)
+func _on_shield_expired(amount: int, source: Entity, skill: Skill) -> void:
+	_emit_event(EventType.SHIELD_EXPIRED, {
+		"amount": amount,
+		"source": source,
+		"skill": skill
+	})
 
 
-func _on_status_applied(effect_type: int, duration: float, source: Entity) -> void:
+func _on_status_applied(
+	effect_type: int,
+	duration: float,
+	source: Entity,
+	skill: Skill
+) -> void:
 	_emit_event(EventType.STATUS_APPLIED, {
 		"effect_type": effect_type,
 		"duration": duration,
-		"source": source
+		"source": source,
+		"skill": skill
 	})
 
 
-func _on_status_expired(effect_type: int) -> void:
-	_emit_event(EventType.STATUS_EXPIRED, {"effect_type": effect_type})
+func _on_status_expired(
+	effect_type: int,
+	source: Entity,
+	skill: Skill
+) -> void:
+	_emit_event(EventType.STATUS_EXPIRED, {
+		"effect_type": effect_type,
+		"source": source,
+		"skill": skill
+	})
 
 
-func _on_status_tick(effect_type: int, amount: int) -> void:
+func _on_status_tick(
+	effect_type: int,
+	amount: int,
+	source: Entity,
+	skill: Skill
+) -> void:
 	_emit_event(EventType.STATUS_TICK, {
 		"effect_type": effect_type,
-		"amount": amount
+		"amount": amount,
+		"source": source,
+		"skill": skill
 	})
 
 
-func _on_buff_applied(modifier: BuffDebuff, stacks: int) -> void:
+func _on_buff_applied(
+	modifier: BuffDebuff,
+	stacks: int,
+	source: Entity,
+	skill: Skill
+) -> void:
 	_emit_event(EventType.BUFF_APPLIED, {
 		"modifier": modifier,
-		"stacks": stacks
+		"stacks": stacks,
+		"source": source,
+		"skill": skill
 	})
 
 
-func _on_buff_expired(modifier: BuffDebuff) -> void:
-	_emit_event(EventType.BUFF_EXPIRED, {"modifier": modifier})
+func _on_buff_expired(
+	modifier: BuffDebuff,
+	source: Entity,
+	skill: Skill
+) -> void:
+	_emit_event(EventType.BUFF_EXPIRED, {
+		"modifier": modifier,
+		"source": source,
+		"skill": skill
+	})
 
 
 func _on_skill_used(skill: Skill, targets: Array[Entity]) -> void:
 	_emit_event(EventType.SKILL_USED, {
+		"source": parent_entity,
 		"skill": skill,
 		"targets": targets
 	})
