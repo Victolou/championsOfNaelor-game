@@ -12,7 +12,9 @@ var current_tile: Tile
 var moving: bool = false
 var grid_manager: GridManager
 var is_red: bool = false
+
 var damage_component: DamageComponent
+var targeting_component: TargetingComponent
 
 
 func _ready() -> void:
@@ -22,6 +24,9 @@ func _ready() -> void:
 	damage_component.name = "DamageComponent"
 	add_child(damage_component)
 	damage_component.initialize(self)
+
+	targeting_component = TargetingComponent.new()
+	targeting_component.initialize(self)
 
 
 func initialize(

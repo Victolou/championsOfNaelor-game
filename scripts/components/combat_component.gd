@@ -68,38 +68,25 @@ func use_skill(skill: Skill) -> void:
 	if skill.target_pattern == null:
 		return
 
-	if parent_entity.grid_manager == null:
+	if parent_entity.targeting_component == null:
 		return
 
-	if parent_entity.current_tile == null:
-		return
-
-	var targets: Array[Tile] = skill.target_pattern.get_tiles(
-		parent_entity.grid_manager,
-		parent_entity
+	var targets: Array[Entity] = parent_entity.targeting_component.get_targets(
+		skill.target_pattern,
+		skill.target_relation,
+		skill.can_target_self
 	)
 
 	# El cooldown solo empieza cuando la habilidad puede ejecutarse.
 	cooldowns[skill] = maxf(skill.cooldown, 0.0)
 
-	for tile: Tile in targets:
-		if tile == null:
-			continue
-
-		var target: Entity = tile.occupant
-
+	for target: Entity in targets:
 		if target == null:
-			continue
-
-		if target == parent_entity:
 			continue
 
 		# Las habilidades antiguas siguen aplicando su daño directamente.
 		# Si hay efectos configurados, cada efecto decide qué hacer con el objetivo.
 		if skill.effects.is_empty():
-			if target.health == null:
-				continue
-
 			target.receive_damage(
 				skill.damage,
 				parent_entity,
