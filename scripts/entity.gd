@@ -16,6 +16,7 @@ var is_red: bool = false
 var damage_component: DamageComponent
 var targeting_component: TargetingComponent
 var status_effect_component: StatusEffectComponent
+var buff_debuff_component: BuffDebuffComponent
 
 
 func _ready() -> void:
@@ -33,6 +34,10 @@ func _ready() -> void:
 	status_effect_component.name = "StatusEffectComponent"
 	add_child(status_effect_component)
 	status_effect_component.initialize(self)
+
+	buff_debuff_component = BuffDebuffComponent.new()
+	buff_debuff_component.name = "BuffDebuffComponent"
+	add_child(buff_debuff_component)
 
 
 func initialize(
@@ -70,6 +75,21 @@ func receive_damage(
 	return damage_component.apply_damage(damage_info)
 
 
+func get_modified_stat(stat: BuffDebuff.Stat, base_value: float) -> float:
+	if buff_debuff_component == null:
+		return base_value
+
+	return buff_debuff_component.get_modified_stat(stat, base_value)
+
+
+func get_attack_damage() -> int:
+	var base_attack: float = 10.0
+	if stats != null:
+		base_attack = float(stats.attack)
+
+	return maxi(roundi(get_modified_stat(BuffDebuff.Stat.ATTACK, base_attack)), 0)
+
+
 func can_act() -> bool:
 	if status_effect_component == null:
 		return true
@@ -94,6 +114,9 @@ func get_direction() -> Vector2i:
 func _on_died() -> void:
 	if status_effect_component != null:
 		status_effect_component.clear_effects()
+
+	if buff_debuff_component != null:
+		buff_debuff_component.clear_modifiers()
 
 	var dead_state: DeadState = $StateMachine/DeadState
 	$StateMachine.change_state(dead_state)
