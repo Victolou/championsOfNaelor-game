@@ -12,6 +12,8 @@ extends Node2D
 
 var battle_over: bool = false
 var pending_actions: int = 0
+var combat_feedback_component: CombatFeedbackComponent
+
 
 func _ready() -> void:
 	player.initialize(
@@ -29,6 +31,12 @@ func _ready() -> void:
 		false,
 		proyectile_manager
 	)
+
+	# El feedback escucha los eventos de combate de ambos campeones.
+	combat_feedback_component = CombatFeedbackComponent.new()
+	combat_feedback_component.name = "CombatFeedbackComponent"
+	add_child(combat_feedback_component)
+	combat_feedback_component.initialize(player, player_2)
 
 	player_2.health.hp = 1000
 
