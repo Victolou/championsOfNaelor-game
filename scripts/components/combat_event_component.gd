@@ -51,7 +51,7 @@ func initialize(entity: Entity) -> void:
 		parent_entity.combat.skill_manager.skill_executed.connect(_on_skill_used)
 
 
-func _emit_event(event_type: EventType, data: Dictionary = {}) -> void:
+func _emit_event(event_type: int, data: Dictionary = {}) -> void:
 	data["entity"] = parent_entity
 	event_emitted.emit(event_type, data)
 
