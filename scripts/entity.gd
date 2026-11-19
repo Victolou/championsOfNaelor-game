@@ -3,6 +3,7 @@ extends CharacterBody2D
 
 @export var skills: Array[Skill]
 @export var stats: CharacterStats
+@export var passive_ability: PassiveAbility
 
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 @onready var combat: CombatComponent = $CombatComponent
@@ -19,6 +20,7 @@ var status_effect_component: StatusEffectComponent
 var buff_debuff_component: BuffDebuffComponent
 var shield_component: ShieldComponent
 var combat_event_component: CombatEventComponent
+var passive_component: PassiveComponent
 
 
 func _ready() -> void:
@@ -49,6 +51,10 @@ func _ready() -> void:
 	combat_event_component.name = "CombatEventComponent"
 	add_child(combat_event_component)
 
+	passive_component = PassiveComponent.new()
+	passive_component.name = "PassiveComponent"
+	add_child(passive_component)
+
 
 func initialize(
 	battle_grid: GridManager,
@@ -66,6 +72,9 @@ func initialize(
 	combat.initialize(self, projectile_manager)
 
 	combat_event_component.initialize(self)
+
+	if passive_ability != null:
+		passive_component.initialize(self, passive_ability)
 
 
 func receive_damage(
