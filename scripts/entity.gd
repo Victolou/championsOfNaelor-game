@@ -1,6 +1,9 @@
 class_name Entity
 extends CharacterBody2D
 
+@export var champion_data: ChampionData
+
+# Campos heredados para mantener compatibilidad con entidades ya configuradas.
 @export var skills: Array[Skill]
 @export var stats: CharacterStats
 @export var passive_ability: PassiveAbility
@@ -64,6 +67,8 @@ func initialize(
 	grid_manager = battle_grid
 	is_red = red_team
 
+	_apply_champion_data()
+
 	# Inicializa la vida con las estadísticas del personaje.
 	# Si no hay estadísticas, conserva el HP predeterminado del componente.
 	if stats != null:
@@ -75,6 +80,17 @@ func initialize(
 
 	if passive_ability != null:
 		passive_component.initialize(self, passive_ability)
+
+
+# Copia los datos del recurso al Entity antes de inicializar sus componentes.
+# Si no hay ChampionData asignado, conserva los campos exportados antiguos.
+func _apply_champion_data() -> void:
+	if champion_data == null:
+		return
+
+	stats = champion_data.stats
+	skills = champion_data.skills
+	passive_ability = champion_data.passive_ability
 
 
 func receive_damage(
