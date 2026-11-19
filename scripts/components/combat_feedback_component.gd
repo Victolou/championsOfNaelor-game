@@ -7,6 +7,8 @@ const HEAL_COLOR := Color(0.35, 1.0, 0.55, 1.0)
 const SHIELD_COLOR := Color(0.35, 0.85, 1.0, 1.0)
 const STATUS_COLOR := Color(1.0, 0.72, 0.3, 1.0)
 const BUFF_COLOR := Color(0.75, 0.6, 1.0, 1.0)
+const EXPIRED_COLOR := Color(0.7, 0.7, 0.75, 1.0)
+const DEFEAT_COLOR := Color(0.9, 0.2, 0.25, 1.0)
 
 const FLASH_DURATION := 0.18
 
@@ -59,14 +61,28 @@ func _on_combat_event(event_type: int, data: Dictionary) -> void:
 				_spawn_text(entity, "SHIELD +%d" % amount, SHIELD_COLOR, 20)
 				_flash_entity(entity, SHIELD_COLOR)
 
+		CombatEventComponent.EventType.SHIELD_EXPIRED:
+			if amount > 0:
+				_spawn_text(entity, "SHIELD END", EXPIRED_COLOR, 18)
+
 		CombatEventComponent.EventType.STATUS_APPLIED:
 			_spawn_text(entity, "STATUS", STATUS_COLOR, 19)
 			_flash_entity(entity, STATUS_COLOR)
+
+		CombatEventComponent.EventType.STATUS_EXPIRED:
+			_spawn_text(entity, "STATUS END", EXPIRED_COLOR, 18)
 
 		CombatEventComponent.EventType.BUFF_APPLIED:
 			var stacks: int = int(data.get("stacks", 1))
 			_spawn_text(entity, "BUFF x%d" % stacks, BUFF_COLOR, 19)
 			_flash_entity(entity, BUFF_COLOR)
+
+		CombatEventComponent.EventType.BUFF_EXPIRED:
+			_spawn_text(entity, "BUFF END", EXPIRED_COLOR, 18)
+
+		CombatEventComponent.EventType.ENTITY_DIED:
+			_spawn_text(entity, "DEFEATED", DEFEAT_COLOR, 25)
+			_flash_entity(entity, DEFEAT_COLOR)
 
 
 # Aplica un destello breve al sprite sin alterar la lógica ni la escala de la entidad.
