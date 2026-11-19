@@ -16,4 +16,5 @@ damage = 300
 icon = ExtResource("1_hdfh6")
 animation = &"cast"
 attack_frame = 2
+is_ultimate = true
 metadata/_custom_type_script = "uid://b1ro11ofn1lss"
