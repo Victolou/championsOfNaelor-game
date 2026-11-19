@@ -1,6 +1,8 @@
 class_name Projectile
 extends Node2D
 
+signal hit_target(target: Entity, applied_damage: int)
+
 var parent_entity: Entity
 var current_tile: Tile
 var direction: Vector2i
@@ -9,6 +11,10 @@ var projectile_manager: ProjectileManager
 
 @export var spawn_offset: Vector2 = Vector2.ZERO
 @export var speed: float = 300.0
+
+# -1 utiliza el ataque de las estadísticas del propietario.
+@export var damage_override: int = -1
+@export_enum("Physical", "Magical", "Pure") var damage_type: int = DamageInfo.DamageType.PHYSICAL
 
 var is_finished: bool = false
 
@@ -25,6 +31,11 @@ func launch() -> void:
 		finish()
 		return
 
+	if direction == Vector2i.ZERO:
+		push_error("Projectile: la dirección no puede ser cero.")
+		finish()
+		return
+
 	if speed <= 0.0:
 		push_error("Projectile: la velocidad debe ser mayor que cero.")
 		finish()
@@ -38,11 +49,7 @@ func move_one_tile() -> bool:
 	if is_finished:
 		return false
 
-	if grid_manager == null:
-		finish()
-		return false
-
-	if current_tile == null:
+	if grid_manager == null or current_tile == null:
 		finish()
 		return false
 
@@ -68,44 +75,73 @@ func move_one_tile() -> bool:
 	if is_finished:
 		return false
 
-	# Si la partida terminó durante el desplazamiento, retira el proyectil.
-	if projectile_manager != null and projectile_manager.battle != null:
-		if projectile_manager.battle.battle_over:
-			finish()
-			return false
+	if _is_battle_over():
+		finish()
+		return false
 
 	current_tile = next_tile
 
 	if not next_tile.is_empty():
-		var target: Entity = next_tile.occupant
-
-		if target == null:
-			finish()
-			return false
-
-		if target.health == null:
-			finish()
-			return false
-
-		if parent_entity == null:
-			finish()
-			return false
-
-		var damage: int = 10
-
-		if parent_entity.stats != null:
-			damage = parent_entity.stats.attack
-
-		target.receive_damage(damage, parent_entity)
-
+		_try_hit_target(next_tile.occupant)
 		finish()
 		return false
 
 	return true
 
 
+# Resuelve el impacto y utiliza el sistema centralizado de daño de Entity.
+func _try_hit_target(target: Entity) -> void:
+	if target == null:
+		return
+
+	if parent_entity == null:
+		return
+
+	if target == parent_entity:
+		return
+
+	if target.health == null or target.health.hp <= 0:
+		return
+
+	# Los proyectiles básicos no dañan a entidades del mismo equipo.
+	if target.is_red == parent_entity.is_red:
+		return
+
+	var damage: int = _get_damage_amount()
+
+	var applied_damage: int = target.receive_damage(
+		damage,
+		parent_entity,
+		null,
+		damage_type
+	)
+
+	if applied_damage > 0:
+		hit_target.emit(target, applied_damage)
+
+
+func _get_damage_amount() -> int:
+	if damage_override >= 0:
+		return damage_override
+
+	if parent_entity != null and parent_entity.stats != null:
+		return parent_entity.stats.attack
+
+	# Mantiene el daño predeterminado que tenía el proyectil.
+	return 10
+
+
+func _is_battle_over() -> bool:
+	if projectile_manager == null:
+		return false
+
+	if projectile_manager.battle == null:
+		return false
+
+	return projectile_manager.battle.battle_over
+
+
 func finish() -> void:
-	# Evita emitir projectile_finished más de una vez.
 	if is_finished:
 		return
 

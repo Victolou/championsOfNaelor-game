@@ -6,6 +6,7 @@ signal projectile_finished
 
 var battle: Battle
 
+
 func spawn(projectile_scene: PackedScene, parent_entity: Entity) -> Projectile:
 	# Valida la escena y la entidad que origina el proyectil.
 	if projectile_scene == null:
@@ -14,10 +15,7 @@ func spawn(projectile_scene: PackedScene, parent_entity: Entity) -> Projectile:
 	if parent_entity == null:
 		return null
 
-	if parent_entity.health == null:
-		return null
-
-	if parent_entity.health.hp <= 0:
+	if parent_entity.health == null or parent_entity.health.hp <= 0:
 		return null
 
 	if battle != null and battle.battle_over:
@@ -48,8 +46,12 @@ func spawn(projectile_scene: PackedScene, parent_entity: Entity) -> Projectile:
 
 	if projectile.direction == Vector2i.RIGHT:
 		spawn_position.x += parent_entity.grid_manager.TILE_SIZE.x / 2
-	else:
+	elif projectile.direction == Vector2i.LEFT:
 		spawn_position.x -= parent_entity.grid_manager.TILE_SIZE.x / 2
+	else:
+		push_error("ProjectileManager: la entidad tiene una dirección no válida.")
+		projectile.queue_free()
+		return null
 
 	spawn_position += projectile.spawn_offset
 	projectile.global_position = spawn_position
