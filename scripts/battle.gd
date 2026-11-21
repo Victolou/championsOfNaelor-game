@@ -1,6 +1,8 @@
 class_name Battle
 extends Node2D
 
+signal result_animations_finished
+
 @onready var player: Player = $Player
 @onready var player_2: Player = $Player2
 @onready var camera_2d: Camera2D = $Camera2D
@@ -13,6 +15,7 @@ extends Node2D
 
 var battle_over: bool = false
 var pending_actions: int = 0
+var pending_result_animations: int = 0
 var combat_feedback_component: CombatFeedbackComponent
 
 
@@ -118,21 +121,41 @@ func _finish_battle(result: String, description: String) -> void:
 	_show_battle_result(result, description)
 
 
-# Espera a que terminen las animaciones de muerte antes de mostrar el resultado.
+# Espera a que terminen las animaciones de ambos campeones antes de mostrar el resultado.
 func _show_battle_result(result: String, description: String) -> void:
 	var defeated_entities: Array[Entity] = []
+	var winning_entities: Array[Entity] = []
 
-	if player.health.hp <= 0:
+	if player.health.hp <= 0 and player_2.health.hp <= 0:
 		defeated_entities.append(player)
-
-	if player_2.health.hp <= 0:
 		defeated_entities.append(player_2)
+	elif player.health.hp <= 0:
+		defeated_entities.append(player)
+		winning_entities.append(player_2)
+	elif player_2.health.hp <= 0:
+		defeated_entities.append(player_2)
+		winning_entities.append(player)
 
+	pending_result_animations = 0
+
+	# Inicia la animación de victoria si el campeón dispone de ella.
+	for entity in winning_entities:
+		var sprite: AnimatedSprite2D = entity.animated_sprite_2d
+
+		if sprite.sprite_frames != null and sprite.sprite_frames.has_animation("victory"):
+			sprite.play("victory")
+			_track_result_animation(sprite)
+
+	# DeadState ya inicia la animación de muerte al derrotar al campeón.
 	for entity in defeated_entities:
 		var sprite: AnimatedSprite2D = entity.animated_sprite_2d
 
-		if sprite.animation == "death" and sprite.is_playing():
-			await sprite.animation_finished
+		if sprite.animation == "death":
+			_track_result_animation(sprite)
+
+	# Las animaciones se reproducen simultáneamente; esperamos a que terminen todas.
+	if pending_result_animations > 0:
+		await result_animations_finished
 
 	# Deja un margen para que el resultado del combate respire antes de aparecer.
 	await get_tree().create_timer(3.0).timeout
@@ -141,6 +164,28 @@ func _show_battle_result(result: String, description: String) -> void:
 		return
 
 	battle_result_ui.show_result(result, description)
+
+
+# Registra únicamente animaciones que estén reproduciéndose y no sean cíclicas.
+func _track_result_animation(sprite: AnimatedSprite2D) -> void:
+	if not sprite.is_playing():
+		return
+
+	if sprite.sprite_frames.get_animation_loop(sprite.animation):
+		return
+
+	pending_result_animations += 1
+	sprite.animation_finished.connect(
+		_on_result_animation_finished.bind(sprite),
+		CONNECT_ONE_SHOT
+	)
+
+
+func _on_result_animation_finished(_sprite: AnimatedSprite2D) -> void:
+	pending_result_animations -= 1
+
+	if pending_result_animations <= 0:
+		result_animations_finished.emit()
 
 
 func _get_display_name(entity: Entity) -> String:
