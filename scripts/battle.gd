@@ -158,7 +158,7 @@ func _show_battle_result(result: String, description: String) -> void:
 		await result_animations_finished
 
 	# Deja un margen para que el resultado del combate respire antes de aparecer.
-	await get_tree().create_timer(3.0).timeout
+	await get_tree().create_timer(2.0).timeout
 
 	if not is_inside_tree():
 		return
