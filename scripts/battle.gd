@@ -118,7 +118,28 @@ func _finish_battle(result: String, description: String) -> void:
 	_show_battle_result(result, description)
 
 
+# Espera a que terminen las animaciones de muerte antes de mostrar el resultado.
 func _show_battle_result(result: String, description: String) -> void:
+	var defeated_entities: Array[Entity] = []
+
+	if player.health.hp <= 0:
+		defeated_entities.append(player)
+
+	if player_2.health.hp <= 0:
+		defeated_entities.append(player_2)
+
+	for entity in defeated_entities:
+		var sprite: AnimatedSprite2D = entity.animated_sprite_2d
+
+		if sprite.animation == "death" and sprite.is_playing():
+			await sprite.animation_finished
+
+	# Deja un margen para que el resultado del combate respire antes de aparecer.
+	await get_tree().create_timer(3.0).timeout
+
+	if not is_inside_tree():
+		return
+
 	battle_result_ui.show_result(result, description)
 
 
