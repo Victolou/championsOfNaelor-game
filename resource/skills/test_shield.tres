@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="Skill" format=3]
+
+[ext_resource type="Script" path="res://scripts/resource/skill.gd" id="1_skill"]
+[ext_resource type="Script" path="res://scripts/targeting/targetPattern.gd" id="2_pattern"]
+[ext_resource type="Script" path="res://scripts/resource/skill_effects/apply_shield_skill_effect.gd" id="3_shield"]
+
+[sub_resource type="Resource" id="TargetPattern"]
+script = ExtResource("2_pattern")
+shape = 4
+distance = 1
+include_origin = true
+
+[sub_resource type="Resource" id="ApplyShieldSkillEffect"]
+script = ExtResource("3_shield")
+shield_amount = 50
+duration = 5.0
+
+[resource]
+script = ExtResource("1_skill")
+target_pattern = SubResource("TargetPattern")
+effects = Array[Resource]([SubResource("ApplyShieldSkillEffect")])
+skill_name = "Shield Test"
+damage = 0
+target_relation = 1
+can_target_self = true
+cooldown = 0.0
+animation = &"cast"
+attack_frame = 2
