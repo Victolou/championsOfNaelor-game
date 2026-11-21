@@ -10,6 +10,7 @@ func _ready() -> void:
 
 func show_result(result: String, description: String) -> void:
 	show()
+	move_to_front()
 	mouse_filter = Control.MOUSE_FILTER_STOP
 
 	for child in get_children():
@@ -79,6 +80,7 @@ func show_result(result: String, description: String) -> void:
 
 	var restart_button := Button.new()
 	restart_button.text = "PLAY AGAIN"
+	restart_button.mouse_filter = Control.MOUSE_FILTER_STOP
 	restart_button.custom_minimum_size = Vector2(200.0, 52.0)
 	restart_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	restart_button.pressed.connect(_restart_battle)
